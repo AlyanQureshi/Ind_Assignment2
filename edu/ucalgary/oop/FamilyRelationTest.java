@@ -9,6 +9,9 @@ public class FamilyRelationTest {
     private String relationshipTo = "sibling";
     private FamilyRelation familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
 
+    // Default constructor
+    public FamilyRelationTest() {}
+
     // testing constructor for Family Relation
     @BeforeClass
     public void testFamilyRelationConstructor() {

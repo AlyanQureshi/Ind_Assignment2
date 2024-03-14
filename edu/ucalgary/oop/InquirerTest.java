@@ -10,6 +10,9 @@ public class InquirerTest {
     private String info = "looking for my family members";
     private Inquirer inquirer = new Inquirer(expectedFirstName, expectedLastName, servicesPhone, info);
 
+    // Default constructor
+    public InquirerTest() {}
+
     // Testing Inquirer Constructor
     @Test
     public void testInquirerConstructor() {
