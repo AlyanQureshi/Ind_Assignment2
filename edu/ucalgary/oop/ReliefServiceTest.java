@@ -123,4 +123,18 @@ public class ReliefServiceTest {
     public void testGetLogDetails() {
         assertEquals("Log details do not match the expected format.", expectedLogDetails, reliefService.getLogDetails());
     }
+
+    @Test
+    public void testValidDateFormatWithCorrectFormatReliefService() {
+        boolean expectedCheck = true;
+        boolean actualCheck = medicalRecord.validateDateFormat("2023-01-01");
+        assertEquals("Method validateDateFormat returned false for a date that has a correct format.", expectedCheck, actualCheck);
+    }
+
+    // Testing validateDateFormat with an incorrect date format
+    @Test(expected = IllegalArgumentException.class) 
+    public void testValidDateFormatWithIncorrectFormReliefService() {
+        medicalRecord.validateDateFormat("2090-01-01");
+        // Expecting IllegalArgumentException due to an invalid date format
+    }
 }
