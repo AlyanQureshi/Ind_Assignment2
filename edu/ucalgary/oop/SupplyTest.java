@@ -14,6 +14,7 @@ public class SupplyTest  {
         assertNotNull("Supply Constructor did not create a new object for 4 oranges.", item);
     }
 
+    // Testing setType 
     @Test
     public void testSupplySetType() {
         Supply item =  new Supply("Orange", 4);
@@ -23,6 +24,7 @@ public class SupplyTest  {
         assertEquals("Method setType did not return the expected type.", expectedType, actualType);
     }
 
+    // Testing getType
     @Test
     public void testSupplyGetType() {
         Supply item = new Supply("Pear", 5);
@@ -31,6 +33,7 @@ public class SupplyTest  {
         assertEquals("Method getType did not return the expected type.", expectedType, actualType);
     }
 
+    // testing setQuantity
     @Test
     public void testSupplySetQuantity() {
         Supply item =  new Supply("Orange", 4);
@@ -40,6 +43,7 @@ public class SupplyTest  {
         assertEquals("Method setQuantity did not return the expected quantity.", expectedQuantity, actualQuantity);
     }
 
+    // Testing getQuantity
     @Test
     public void testSupplyGetQuantity() {
         Supply item =  new Supply("Orange", 4);
