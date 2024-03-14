@@ -15,7 +15,7 @@ public class SupplyTest  {
     public SupplyTest() {}
 
     /** Testing Constructor for Supply */
-    @Test
+    @Before
     public void testSupplyConstructor () {
         Supply item =  new Supply("Orange", 4);
         assertNotNull("Supply Constructor did not create a new object for 4 oranges.", item);
