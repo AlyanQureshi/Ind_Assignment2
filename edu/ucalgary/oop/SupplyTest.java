@@ -35,7 +35,7 @@ public class SupplyTest  {
     @Test
     public void testSupplyGetType() {
         Supply item = new Supply("Pear", 5);
-        String actualType = item.getType()
+        String actualType = item.getType();
         String expectedType = "Pear";
         assertEquals("Method getType did not return the expected type.", expectedType, actualType);
     }
@@ -46,7 +46,7 @@ public class SupplyTest  {
         Supply item =  new Supply("Orange", 4);
         item.setQuantity(2);
         String actualQuantity = item.getQuantity();
-        String expectedQuantity = 2;
+        int expectedQuantity = 2;
         assertEquals("Method setQuantity did not return the expected quantity.", expectedQuantity, actualQuantity);
     }
 
@@ -55,7 +55,7 @@ public class SupplyTest  {
     public void testSupplyGetQuantity() {
         Supply item =  new Supply("Orange", 4);
         String actualQuantity = item.getQuantity();
-        String expectedQuantity = 4;
+        int expectedQuantity = 4;
         assertEquals("Method getQuantity did not return the expected quantity.", expectedQuantity, actualQuantity);
     }
 }
