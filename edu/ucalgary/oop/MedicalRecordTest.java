@@ -80,14 +80,15 @@ public class MedicalRecordTest {
 
     // Testing validateDateFormat with a correct date format
     @Test
-    public void testValidDateFormat() {
+    public void testValidDateFormatWithCorrectFormat() {
         boolean expectedCheck = true;
         boolean actualCheck = medicalRecord.validateDateFormat(dateOfTreatment);
         assertEquals("Method validateDateFormat returned false for a date that has a correct format.", expectedCheck, actualCheck);
     }
 
     // Testing validateDateFormat with an incorrect date format
-    @Test(expected = IllegalArgumentException.class) {
+    @Test(expected = IllegalArgumentException.class) 
+    public void testValidDateFormatWithIncorrectForm() {
         medicalRecord.validateDateFormat(inValidDateOfTreatment);
         // Expecting IllegalArgumentException due to an invalid date format
     }
