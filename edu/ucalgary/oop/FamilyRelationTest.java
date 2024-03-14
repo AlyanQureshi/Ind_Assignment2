@@ -16,14 +16,11 @@ public class FamilyRelationTest {
     /** This setup will run before every other test */ 
     @Before
     public void setUp() {
-        private DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19");
-        private DisasterVictim personTwo = new DisasterVictim("Jane Dalan", "2024-02-20");
-        private String relationshipTo = "sibling";
-        private FamilyRelation familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
+        DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19");
+        DisasterVictim personTwo = new DisasterVictim("Jane Dalan", "2024-02-20");
+        String relationshipTo = "sibling";
+        FamilyRelation familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
     }
-
-    /**  Default constructor */
-    public FamilyRelationTest() {}
 
     /** Testing constructor for Family Relation */
     @Test

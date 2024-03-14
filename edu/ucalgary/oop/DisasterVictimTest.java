@@ -26,7 +26,7 @@ public class DisasterVictimTest {
     private String dateOfBirth = "2001-08-13";
     private String comments = "Needs medical attention and speaks 2 languages";
     private int age;
-    String[] mealRestrictions = ["Halal Meal"];
+    String[] mealRestrictions = {"Halal Meal"};
     enum DietTypes {
         AVML, DBML, GFML, LSML, MOML, PFML, VGML, VJML // These are all possible dietary restrictions
     }
@@ -135,7 +135,7 @@ public class DisasterVictimTest {
         if (victim1.setAge(15) && victim1.setDateOfBirth("2003-02-01"))
             check = true;
         
-        assertFalse("Both methods setAge and setDateOfBirth should not be able to run.", check)
+        assertFalse("Both methods setAge and setDateOfBirth should not be able to run.", check);
     }
 
     /** Testing whether the method getAssignedSocialID accurately return the right SocialID */

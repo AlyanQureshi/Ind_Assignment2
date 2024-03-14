@@ -16,13 +16,11 @@ public class MedicalRecordTest {
     @Before
     public void setUp() {
         Location location = new Location("Telus Spark", "102 17th Ave NW, Calgary");
-        private String treatmentDetails = "Fixed a fracture in femur.";
-        private String dateOfTreatment = "2024-03-13";
-        private String inValidDateOfTreatment = "2024-2-4";
+        String treatmentDetails = "Fixed a fracture in femur.";
+        String dateOfTreatment = "2024-03-13";
+        String inValidDateOfTreatment = "2024-2-4";
         MedicalRecord medicalRecord = new MedicalRecord(location, treatmentDetails, dateOfTreatment);
     }
-
-    public MedicalRecordTest() {} 
 
     /** Testing constructor with a valid date format */
     @Test
