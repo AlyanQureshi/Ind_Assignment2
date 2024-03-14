@@ -88,7 +88,7 @@ public class MedicalRecordTest {
 
     // Testing validateDateFormat with an incorrect date format
     @Test(expected = IllegalArgumentException.class) 
-    public void testValidDateFormatWithIncorrectFormMedicalRecord() {
+    public void testValidDateFormatWithIncorrectFormatMedicalRecord() {
         medicalRecord.validateDateFormat(inValidDateOfTreatment);
         // Expecting IllegalArgumentException due to an invalid date format
     }

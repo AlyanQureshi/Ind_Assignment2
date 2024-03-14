@@ -292,7 +292,7 @@ public class DisasterVictimTest {
 
     // Testing validateDateFormat with an incorrect date format
     @Test(expected = IllegalArgumentException.class) 
-    public void testValidDateFormatWithIncorrectFormDisasterVictim() {
+    public void testValidDateFormatWithIncorrectFormatDisasterVictim() {
         medicalRecord.validateDateFormat("2090-01-01");
         // Expecting IllegalArgumentException due to an invalid date format
     }

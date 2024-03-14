@@ -133,7 +133,7 @@ public class ReliefServiceTest {
 
     // Testing validateDateFormat with an incorrect date format
     @Test(expected = IllegalArgumentException.class) 
-    public void testValidDateFormatWithIncorrectFormReliefService() {
+    public void testValidDateFormatWithIncorrectFormatReliefService() {
         medicalRecord.validateDateFormat("2090-01-01");
         // Expecting IllegalArgumentException due to an invalid date format
     }
