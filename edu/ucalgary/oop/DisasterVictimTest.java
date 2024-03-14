@@ -20,7 +20,7 @@ public class DisasterVictimTest {
     private String comments = "Needs medical attention and speaks 2 languages";
     private int age;
     String[] mealRestrictions = ["Halal Meal"];
-    public enum DietTypes {
+    enum DietTypes {
         AVML, DBML, GFML, LSML, MOML, PFML, VGML, VJML // These are all possible dietary restrictions
     }
 
