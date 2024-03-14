@@ -5,16 +5,19 @@ import static org.junit.Assert.*;
 
 public class MedicalRecordTest {
 
-    Location location = new Location("Telus Spark", "102 17th Ave NW, Calgary");
-    private String treatmentDetails = "Fixed a fracture in femur.";
-    private String dateOfTreatment = "2024-03-13";
-    private String inValidDateOfTreatment = "2024-2-4";
-    MedicalRecord medicalRecord = new MedicalRecord(location, treatmentDetails, dateOfTreatment);
+    @Before
+    public void setUp() {
+        Location location = new Location("Telus Spark", "102 17th Ave NW, Calgary");
+        private String treatmentDetails = "Fixed a fracture in femur.";
+        private String dateOfTreatment = "2024-03-13";
+        private String inValidDateOfTreatment = "2024-2-4";
+        MedicalRecord medicalRecord = new MedicalRecord(location, treatmentDetails, dateOfTreatment);
+    }
 
     public MedicalRecordTest() {} 
 
     // Testing constructor with a valid date format
-    @BeforeClass
+    @Test
     public void testMedicalRecordConstructorWithValidDate() {
         assertNotNull("Medical Record Constructor did not create a new object.", medicalRecord);
     }
@@ -35,13 +38,13 @@ public class MedicalRecordTest {
     }
 
     // Testing get location
-    @Before
+    @Test
     public void testGetLocation() {
         assertEquals("Method getLocation did not return the right location.", location, medicalRecord.getLocation());
     }
 
     // Testing get treatment details
-    @Before
+    @Test
     public void testGetTreatmentDetails() {
         assertEquals("Method getTreatmentDetails did not return the correct treatment details.", treatmentDetails, medicalRecord.getTreatmentDetails());
     }
@@ -55,7 +58,7 @@ public class MedicalRecordTest {
     }    
 
     // Testing get Date of treatment 
-    @Before
+    @Test
     public void testGetDateOfTreatment() {
         assertEquals("Method getDateOfTreatment did not return the right date of treatment.", dateOfTreatment, medicalRecord.getDateOfTreatment());
     }

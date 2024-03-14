@@ -4,22 +4,27 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class FamilyRelationTest {
-    private DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19");
-    private DisasterVictim personTwo = new DisasterVictim("Jane Dalan", "2024-02-20");
-    private String relationshipTo = "sibling";
-    private FamilyRelation familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
+    
+    // This setup will run before every other test
+    @Before
+    public void setUp() {
+        private DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19");
+        private DisasterVictim personTwo = new DisasterVictim("Jane Dalan", "2024-02-20");
+        private String relationshipTo = "sibling";
+        private FamilyRelation familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
+    }
 
     // Default constructor
     public FamilyRelationTest() {}
 
     // testing constructor for Family Relation
-    @BeforeClass
+    @Test
     public void testFamilyRelationConstructor() {
         assertNotNull("Family Relation class was not able to make a new object.", familyRelationObject);
     }
 
     // Testing method getPersonOne
-    @Before
+    @Test
     public void testGetPersonOne() {
         assertEquals("Method getPersonOne did not return personOne", personOne, familyRelationObject.getPersonOne());
     }
@@ -33,7 +38,7 @@ public class FamilyRelationTest {
     }
 
     // Testing method getRelationshipTo
-    @Before
+    @Test
     public void testGetRelationshipTo() {
         assertEquals("Method getRelationshipTo did not return the correct relationship.", relationshipTo, familyRelationObject.getRelationshipTo());
     }
@@ -47,7 +52,7 @@ public class FamilyRelationTest {
     }
 
     // Testing method getPersonTwo
-    @Before
+    @Test
     public void testGetPersonTwo() {
         assertEquals("Method getPersonTwo did not return personTwo", personTwo, familyRelationObject.getPersonTwo());
     }

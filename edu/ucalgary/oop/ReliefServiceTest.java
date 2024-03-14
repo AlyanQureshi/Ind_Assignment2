@@ -22,7 +22,7 @@ public class ReliefServiceTest {
     public ReliefServiceTest() {}
 
     // Set Up code to set up each variable such as inquirer and missingPerson.
-    @BeforeClass
+    @Before
     public void setUp() {
         inquirer = new Inquirer("John", "Alex", "1234567890", "Looking for family member");
         missingPerson = new DisasterVictim("Jane Alex", "2024-01-25");
@@ -44,7 +44,7 @@ public class ReliefServiceTest {
     }
 
     // Testing method getInqirer
-    @Before
+    @Test
     public void testGetInquirer() {
         assertEquals("Method getInquirer was not able to retrieve Inquirer properly.", inquirer, reliefService.getInquirer());
     }
@@ -58,7 +58,7 @@ public class ReliefServiceTest {
     }
 
     // Testing method getMissingPerson 
-    @Before
+    @Test
     public void testGetMissingPerson() {
         assertEquals("Missing person does not match the one set in setup", missingPerson, reliefService.getMissingPerson());
     }
@@ -72,7 +72,7 @@ public class ReliefServiceTest {
     }
 
     // Testing getDateOfInquiry
-    @Before
+    @Test
     public void testGetDateOfInquiry() {
         assertEquals("Date of inquiry does not match the one set in setup", validDateOfInquiry, reliefService.getDateOfInquiry());
     }
@@ -91,7 +91,7 @@ public class ReliefServiceTest {
     }
 
     // Testing method getInfoProvided
-    @Before
+    @Test
     public void testGetInfoProvided() {
         assertEquals("Info provided did not match the one set in setup.", infoProvided, reliefService.getInfoProvided());
     }
@@ -105,7 +105,7 @@ public class ReliefServiceTest {
     }
 
     // Testing method getLastKnownLocation
-    @Before
+    @Test
     public void testGetLastKnownLocation() {
         assertEquals("Last known location did not match the one set in setup", lastKnownLocation, reliefService.getLastKnownLocation());
     }
