@@ -1,3 +1,10 @@
+/**
+ * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
+ * muhammad.qureshi4@ucalgary.ca</a>
+ * @version 1.8
+ * @since 1.0
+*/
+
 package edu.ucalgary.oop;
 
 import org.junit.*;
@@ -16,6 +23,7 @@ public class LocationTest {
     private String name;
     private String address;
 
+    /** The method setUp runs before test method to ensure consistency */
     @Before
     public void setUp() {
         // Initializing test objects before each test method
@@ -36,16 +44,19 @@ public class LocationTest {
         supplies.add(supply2);
     }
 
+    /** This test checks whether the Location Constructor is able to make a new Location object */
     @Test
     public void testLocationConstructor() {
         assertNotNull("The Location Constructor was not able to make an object.", location);
     }
 
+    /** Testing whether the method getName returns the right name */
     @Test
     public void testGetName() {
         assertEquals("The name is not the same as the name that the object location had in setup.", name, location.getName());
     }
 
+    /** Testing whether the method setName correcly updates the value of name */
     @Test
     public void testSetName() {
         String newName = "Rumble Town Rodeo";
@@ -53,11 +64,13 @@ public class LocationTest {
         assertEquals("The method setName did not correctly update the name of the location.", newName, location.getName());
     }
 
+    /** Tests whether the method getAddress correctly returns the right address */
     @Test
     public void testGetAddress() {
         assertEquals("The method getAddress did not retrieve the address accurately.", address, location.getAddress());
     }
 
+    /** Tests whether the method setAddress correctly updates the address */
     @Test
     public void testSetAddress() {
         String newAddress = "Old Town Road";
@@ -65,11 +78,13 @@ public class LocationTest {
         assertEquals("The method setAddress did not appropriately update the location's address.", newAddress, location.getAddress());
     }
 
+    /** Testing whether the method getOccupants returns the right occupants */
     @Test
     public void testGetOccupants() {
         assertEquals("The method getOccupants was not able to retrieve the hashset of occupants for a location.", occupants, location.getOccupants());
     }
 
+    /** Testing whether the method setOccupants correctly updates the occupants */
     @Test
     public void testSetOccupants() {
         DisasterVictim newVictim1 = new DisasterVictim("John Sock", "2021-09-01");
@@ -83,11 +98,13 @@ public class LocationTest {
         assertEquals("The method setOccupants was not able to update the value of the location's occupants.", newOccupants, location.getOccupants());
     }
 
+    /** Testing whether the method getSupplies correctly returns the right supplies */
     @Test
     public void testGetSupplies() {
         assertEquals("The method getSupplies did not retrieve the vector of supplies for this location.", supplies, location.getSupplies());
     }
 
+    /** Testing whether the method setSupplies correctly updates the right supplies */
     @Test 
     public void testSetSupplies() {
         Supply newSupply1 = new Supply("Lays", 20);
@@ -101,6 +118,7 @@ public class LocationTest {
         assertEquals("The method setSupplies was not able to update the value of the location's supplies.", newSupplies, location.getSupplies());
     }
 
+    /** Testing whether the method addOccupant correctly adds a new DisasterVictim object */
     @Test
     public void testAddOccupant() {
         DisasterVictim victim3 = new DisasterVictim("Henry Cavil", "2021-09-07");
@@ -108,12 +126,14 @@ public class LocationTest {
         assertTrue("The method addOccupant did not correctly add the new victim to this location.", location.getOccupants().contains(victim3));
     }
 
+    /** Testing whether the method removeOccupant correctly removes a DisasterVictim object */
     @Test
     public void testRemoveOccupant() {
         location.removeOccupant(victim2);
         assertFalse("The method removeOccupant did not properly delete the victim.", location.getOccupants().contains(victim2));
     }
 
+    /** Testing whether the method addSupply adds a new Supply object to the location */
     @Test 
     public void testAddSupply() {
         Supply supply3 = new Supply("Banana", 15);
@@ -121,6 +141,7 @@ public class LocationTest {
         assertTrue("The method addSupply did not properly add the supplies to the location.", location.getSupplies().contains(supply3));
     }
 
+    /** Testing whether the method removeSupply correctly removes a supply object. */
     @Test
     public void testRemoveSupply() {
         location.removeSupply(supply2);
