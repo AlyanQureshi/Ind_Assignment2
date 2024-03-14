@@ -1,3 +1,11 @@
+/**
+ * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
+ * muhammad.qureshi4@ucalgary.ca</a>
+ * @version 1.5
+ * @since 1.0
+*/
+
+
 package edu.ucalgary.oop;
 
 import org.junit.*;
@@ -5,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class FamilyRelationTest {
     
-    // This setup will run before every other test
+    /** This setup will run before every other test */ 
     @Before
     public void setUp() {
         private DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19");
@@ -14,22 +22,22 @@ public class FamilyRelationTest {
         private FamilyRelation familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
     }
 
-    // Default constructor
+    /**  Default constructor */
     public FamilyRelationTest() {}
 
-    // testing constructor for Family Relation
+    /** Testing constructor for Family Relation */
     @Test
     public void testFamilyRelationConstructor() {
         assertNotNull("Family Relation class was not able to make a new object.", familyRelationObject);
     }
 
-    // Testing method getPersonOne
+    /** Testing method getPersonOne */
     @Test
     public void testGetPersonOne() {
         assertEquals("Method getPersonOne did not return personOne", personOne, familyRelationObject.getPersonOne());
     }
 
-    // Testing setPersonOne
+    /**  Testing setPersonOne */
     @Test
     public void testSetPersonOne() {
         DisasterVictim newPersonOne = new DisasterVictim("John Wick", "2024-03-21");
@@ -37,13 +45,13 @@ public class FamilyRelationTest {
         assertEquals("Method setPersonOne did not update personOne", newPersonOne, familyRelationObject.getPersonOne());
     }
 
-    // Testing method getRelationshipTo
+    /** Testing method getRelationshipTo */
     @Test
     public void testGetRelationshipTo() {
         assertEquals("Method getRelationshipTo did not return the correct relationship.", relationshipTo, familyRelationObject.getRelationshipTo());
     }
 
-    // Testing setRelationshipTo
+    /**  Testing setRelationshipTo */
     @Test
     public void testSetRelationshipTo() {
         String newRelationship = "Father";
@@ -51,13 +59,13 @@ public class FamilyRelationTest {
         assertEquals("Method setRelationshipTo did not update the relationship properly.", newRelationship, familyRelationObject.getRelationshipTo());
     }
 
-    // Testing method getPersonTwo
+    /** Testing method getPersonTwo */
     @Test
     public void testGetPersonTwo() {
         assertEquals("Method getPersonTwo did not return personTwo", personTwo, familyRelationObject.getPersonTwo());
     }
 
-    // Testing method setPersonTwo
+    /** Testing method setPersonTwo */
     @Test 
     public void testSetPersonTwo() {
         DisasterVictim newPersonTwo = new DisasterVictim("Jason Bourne", "2024-03-21");

@@ -1,7 +1,7 @@
 /**
  * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
  * muhammad.qureshi4@ucalgary.ca</a>
- * @version 1.8
+ * @version 2.2
  * @since 1.0
 */
 
