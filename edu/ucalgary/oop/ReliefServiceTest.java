@@ -18,7 +18,6 @@ public class ReliefServiceTest {
     // for this interface are appendQuery and searchPastQuery. Thus, I will not be testing these in this file since it said on the 
     // class anouncement board that we do need to test the user interface which these methods will be used for. 
 
-
     // Default Constructor
     public ReliefServiceTest() {}
 
