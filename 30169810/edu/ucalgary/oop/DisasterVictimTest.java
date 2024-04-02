@@ -106,36 +106,48 @@ public class DisasterVictimTest {
         assertEquals("The method setAge did not set the new age.", 20, victim1.getAge());
     }
 
-    /** Testing whether the method setAge accurately throws an Illegal Argument Exception when the age is not a correct value. */
+    /** Testing whether the method setAge accurately throws an Illegal Argument Exception when the age is a negative value. */
     @Test (expected = IllegalArgumentException.class)
-    public void testSetInvalidAge() {
+    public void testSetInvalidNegativeAge() {
         victim1.setAge(-20);
         // Expecting to throw Illegal Argument Exception when running this test.
     }
 
-    /** Testing whether setAge accuately calculates age with a date of birth and EntryDate */
-    @Test
-    public void testSetAgeWithValidDateOfBirthAndEntryDate() {
-        victim1.setAge(dateOfBirth, ENTRY_DATE);
-        assertEquals("The method setAge did not correctly set the new age with dateOfBirth and EntryDate.", age, victim1.getAge());
-    }
-
-    /** Testing whether setAge will accurately throw an Illegal Argument Exception when date of birth and entry date have an incorrect date format */
+    /** Testing whether the method setAge accurately throws an Illegal Argument Exception when the age is too high of a value. */
     @Test (expected = IllegalArgumentException.class)
-    public void testSetAgeWithInvalidDateOfBirthAndEntryDate() {
-        victim1.setAge("2030-01-01", "2028-01-01");
+    public void testSetInvalidHighAge() {
+        victim1.setAge(200);
         // Expecting to throw Illegal Argument Exception when running this test.
     }
 
-    /** Testing whether both functions will run when they are not supposed to (Only one is supposed to run) */
+    /** Testing whether both age and dataOfBirth have values by first setting age then birthdate 
+     * (date of birth is supposed to have a value, age is NULL) */
     @Test
-    public void testSettingBothAgeAndBirthDate() {
+    public void testFirstAgeThenBirthDate() {
         boolean check = false;
-        
-        if (victim1.setAge(15) && victim1.setDateOfBirth("2003-02-01"))
+        victim1.setAge(15);
+        victim1.setDateOfBirth("2003-02-01");
+
+        // Age should be NULL 
+        if (age)
             check = true;
+
+        assertFalse("Both age and dateOfBirth should not be able to be set.", check);
+    }
+
+    /** Testing whether both age and dataOfBirth have values by first setting birthdate then age
+     * (age is supposed to have a value, date of birth is NULL) */
+    @Test
+    public void testFirstBirthDateThenAge() {
+        boolean check = false;
+        victim1.setDateOfBirth("2003-02-01");
+        victim1.setAge(15);
         
-        assertFalse("Both methods setAge and setDateOfBirth should not be able to run.", check);
+        // BirthDate should be NULL 
+        if (dataOfBirth)
+            check = true;
+
+        assertFalse("Both age and dateOfBirth should not be able to be set.", check);
     }
 
     /** Testing whether the method getAssignedSocialID accurately return the right SocialID */
