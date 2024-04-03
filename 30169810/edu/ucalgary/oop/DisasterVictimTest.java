@@ -22,7 +22,7 @@ public class DisasterVictimTest {
     private String ENTRY_DATE = "2024-01-18";
     private String validDate = "2024-01-15";
     private String invalidDate = "15/13/2024";
-    private String gender = "Male";
+    private String gender = "man";
     private String dateOfBirth = "2001-08-13";
     private String comments = "Needs medical attention and speaks 2 languages";
     private int age;
@@ -306,7 +306,7 @@ public class DisasterVictimTest {
     /** Testing whether the method setGender correctly updates the gender */
     @Test
     public void testSetGenderWithValidInput() {
-        String validGender = "Female";
+        String validGender = "woman";
         victim1.setGender(validGender);
         assertEquals("The method setGender did not update the gender correctly.", validGender, victim1.getGender());
     }
@@ -314,9 +314,25 @@ public class DisasterVictimTest {
     /** Testing whether the method setGender correctly throws an Illegal Argument Exception */
     @Test (expected = IllegalArgumentException.class) 
     public void testSetGenderWithInvalidInput() {
-        String invalidGender = "Rhinosaurus"; //Should be Invalid
+        String invalidGender = "rhinoceros"; //Should be Invalid
         victim1.setGender(invalidGender);
         // Expecting to throw Illegal Argument Exception when running this test.
+    }
+
+    /**EDIT THIS LATER */
+    @Test
+    public void testGetGenderOptions() {
+        String[] options = victim1.getGenderOptions();
+    }
+
+    /** Testing whether the method populateGenderOptions correctly reads and fills out the string list of gender options */
+    @Test  
+    public void testSetGenderOptions() {
+        // Create a new text file and also hard code and see if they are similar
+        
+        String 
+        victim1.setGender(invalidGender);
+        
     }
 
     /** Testing whether the method getDietaryRestrictions correctly returns the right dietary restrictions */
