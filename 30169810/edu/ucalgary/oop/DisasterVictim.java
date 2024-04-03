@@ -2,8 +2,10 @@
 
 package edu.ucalgary.oop;
 
-import java.util.List;
-import java.util.Arrays;
+import org.junit.*;
+import static org.junit.Assert.*;
+import java.util.Vector;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.time.LocalDate;
 
@@ -15,12 +17,15 @@ public class DisasterVictim {
     private String lastName;
     private String dateOfBirth;
     private final int ASSIGNED_SOCIAL_ID;
-    private ArrayList<FamilyRelation> familyConnections = new ArrayList<>();
-    private ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();
-    private Supply[] personalBelongings;
+    private HashSet<FamilyRelation> familyConnections = new HashSet<>();
+    private Vector<MedicalRecord> medicalRecords = new Vector<>();
+    private HashSet<Supply> personalBelongings = new HashSet<>();
     private final String ENTRY_DATE;
     private String gender;
+    private String[] genderOptions;
     private String comments;
+    private int age;
+    private String [] mealRestrictions;
 
     public DisasterVictim(String firstName, String ENTRY_DATE) {
         this.firstName = firstName;
@@ -28,6 +33,32 @@ public class DisasterVictim {
             throw new IllegalArgumentException("Invalid date format for entry date. Expected format: YYYY-MM-DD");
         }
         this.ENTRY_DATE = ENTRY_DATE;
+        this.ASSIGNED_SOCIAL_ID = generateSocialID();
+        
+    }
+
+    public DisasterVictim(String firstName, String lastName, String ENTRY_DATE) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        if (!isValidDateFormat(ENTRY_DATE)) {
+            throw new IllegalArgumentException("Invalid date format for entry date. Expected format: YYYY-MM-DD");
+        }
+        this.ENTRY_DATE = ENTRY_DATE;
+        this.ASSIGNED_SOCIAL_ID = generateSocialID();
+        
+    }
+
+    public DisasterVictim(String firstName, String lastName, String dateOfBirth, String ENTRY_DATE) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        if (!isValidDateFormat(ENTRY_DATE)) {
+            throw new IllegalArgumentException("Invalid date format for entry date. Expected format: YYYY-MM-DD");
+        }
+        this.ENTRY_DATE = ENTRY_DATE;
+        if (!isValidDateFormat(dataOfBirth)) {
+            throw new IllegalArgumentException("Invalid date format for date of birth. Expected format: YYYY-MM-DD");
+        }
+        this.dataOfBirth = dataOfBirth;
         this.ASSIGNED_SOCIAL_ID = generateSocialID();
         
     }
@@ -69,32 +100,47 @@ public class DisasterVictim {
         if (!isValidDateFormat(dateOfBirth)) {
             throw new IllegalArgumentException("Invalid date format for date of birth. Expected format: YYYY-MM-DD");
         }
+        // Making sure that age is NULL when we set dateOfBirth
+        this.age = 0;
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        if (age <= 0 || age >= 120) {
+            throw new IllegalArgumentException("Invalid age, please put a valid integer for age!");
+        }
+        else {
+            this.age = age;
+            // Making sure date of birth is NULL when I set age.
+            this.dateOfBirth = null;
+        }
     }
 
     public int getAssignedSocialID() {
         return ASSIGNED_SOCIAL_ID;
     }
 
-  public FamilyRelation[] getFamilyConnections() {
-        return familyConnections.toArray(new FamilyRelation[0]);
+    public HashSet<FamilyRelation> getFamilyConnections() {
+        return familyConnections;
     }
 
-    public MedicalRecord[] getMedicalRecords() {
-        return medicalRecords.toArray(new MedicalRecord[0]);
+    public Vector<MedicalRecord> getMedicalRecords() {
+        return medicalRecords;
     }
 
-    public Supply[] getPersonalBelongings() {
-        return this.personalBelongings;
+    public HashSet<Supply> getPersonalBelongings() {
+        return personalBelongings;
     }
-
-    // The add and remove methods remain correct.
     
     // Correct the setters to accept Lists instead of arrays
-    public void setFamilyConnections(FamilyRelation[] connections) {
+    public void setFamilyConnections(HashSet<FamilyRelation> connections) {
         this.familyConnections.clear();
-        for (FamilyRelation newRecord : connections) {
-            addFamilyConnection(newRecord);
+        for (FamilyRelation newConnection : connections) {
+            addFamilyConnection(newConnection);
         }
     }
 
@@ -150,11 +196,77 @@ public class DisasterVictim {
     }
 
     public void removeFamilyConnection(FamilyRelation exRelation) {
-        familyConnections.remove(exRelation);
+        // Making a temp FamilyRelation object where personOne and personTwo are switched for checking purposes.  
+        DisasterVictim tempPerson1 = exRelation.getPersonTwo();
+        DisasterVictim tempPerson2 = exRelation.getPersonOne();
+        String tempRelationship = exRelation.getRelationshipTo();
+        FamilyRelation tempRelation = new FamilyRelation(tempPerson1, tempRelationship, tempPerson2);
+
+        // Checking whether the original exRelation exists in personOne's familyConnections
+        if (this.familyConnections.contains(exRelation)) {
+            this.familyConnections.remove(exRelation);
+            
+            // Checking whether the original exRelation exists in personTwo's familyConnections
+            if (tempPerson1.getFamilyConnections().contains(exRelation)) {
+                tempPerson1.getFamilyConnections().remove(exRelation);
+            }
+            // Checking whether the temp exRelation exists in personTwo's familyConnections
+            else if (tempPerson1.getFamilyConnections().contains(tempRelation)) {
+                tempPerson1.getFamilyConnections().remove(tempRelation);
+            }
+        }
+
+        // Checking whether the temp exRelation exists in personOne's familyConnections
+        else if (this.familyConnections.contains(tempRelation)) {
+            this.familyConnections.remove(tempRelation);
+
+            // Checking whether the original exRelation exists in personTwo's familyConnections
+            if (tempPerson1.getFamilyConnections().contains(exRelation)) {
+                tempPerson1.getFamilyConnections().remove(exRelation);
+            }
+            // Checking whether the temp exRelation exists in personTwo's familyConnections
+            else if (tempPerson1.getFamilyConnections().contains(tempRelation)) {
+                tempPerson1.getFamilyConnections().remove(tempRelation);
+            }
+        }
+
+        // Throw an exception if the exRelation or tempRelation did not even exist
+        else {
+            throw new IllegalArgumentException("A relation that did not exist cannot be deleted in the first place!");
+        }
     }
 
-    public void addFamilyConnection(FamilyRelation record) {
-        familyConnections.add(record);
+    public void addFamilyConnection(FamilyRelation relation) { 
+        // Making a temp FamilyRelation object where personOne and personTwo are switched for checking purposes.    
+        DisasterVictim tempPerson1 = relation.getPersonTwo();
+        DisasterVictim tempPerson2 = relation.getPersonOne();
+        String tempRelationship = relation.getRelationshipTo();
+        FamilyRelation tempRelation = new FamilyRelation(tempPerson1, tempRelationship, tempPerson2);
+
+        // NOTE: The following if statements also handle the case where there is a series of relationships
+        // For example, if Peace and Sam also have a sibling Diamond, we 
+        // will have a situation where Peace and Sam's, and Peace
+        // and Diamond's, and Diamond and Sam's relationship are all present 
+        // in each of their respective familyConnections variable.
+
+        // Check whether this relation already exists in familyConnections.
+        // One is the original relation and the other is with personOne and personTwo switched.
+        if (this.familyConnections.contains(relation) || this.familyConnections.contains(tempRelation)) {
+            return;
+        } 
+        // Check whether the other person also has the relation with both types of relationship 
+        // with personOne switched with personTwo in another relationship
+        else if (tempPerson1.getFamilyConnections().contains(relation) || tempPerson1.getFamilyConnections().contains(tempRelation)) {
+            // If it had it, that means the other person did not have the relationship so add it to personOne's familyConnections
+            this.familyConnections.add(relation);
+            return;
+        }
+        // If both people did not have the relatioships, then add it to both personOne's familyConnections and 
+        // personTwo's familyConnections
+        else {
+            this.familyConnections.add(relation);
+            tempPerson1.getFamilyConnections().add(relation);
+        }
     }
 
 
