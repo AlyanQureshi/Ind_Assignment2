@@ -101,8 +101,13 @@ public class DisasterVictim {
             throw new IllegalArgumentException("Invalid date format for date of birth. Expected format: YYYY-MM-DD");
         }
         // Making sure that age is NULL when we set dateOfBirth
-        this.age = 0;
-        this.dateOfBirth = dateOfBirth;
+        else if (age) {
+            throw new IllegalArgumentException("Cannot set dateOfBirth since age already has a value!");
+        }
+        // If date has a valid format and age does not have a value, set dateOfBirth
+        else {
+            this.dateOfBirth = dateOfBirth;
+        }
     }
 
     public int getAge() {
@@ -113,10 +118,13 @@ public class DisasterVictim {
         if (age <= 0 || age >= 120) {
             throw new IllegalArgumentException("Invalid age, please put a valid integer for age!");
         }
+        // Making sure that dateOfBirth is NULL when we set age
+        else if (dateOfBirth) {
+            throw new IllegalArgumentException("Cannot set age since dateOfBirth already has a value!");
+        }
+        // If age has a valid number and dateOfBirth does not have a value, set age
         else {
             this.age = age;
-            // Making sure date of birth is NULL when I set age.
-            this.dateOfBirth = null;
         }
     }
 
@@ -203,30 +211,30 @@ public class DisasterVictim {
         FamilyRelation tempRelation = new FamilyRelation(tempPerson1, tempRelationship, tempPerson2);
 
         // Checking whether the original exRelation exists in personOne's familyConnections
-        if (this.familyConnections.contains(exRelation)) {
-            this.familyConnections.remove(exRelation);
+        if (this.familyConnections.containsFamilyObject(exRelation)) {
+            this.familyConnections.removeFamilyObject(exRelation);
             
             // Checking whether the original exRelation exists in personTwo's familyConnections
-            if (tempPerson1.getFamilyConnections().contains(exRelation)) {
-                tempPerson1.getFamilyConnections().remove(exRelation);
+            if (tempPerson1.getFamilyConnections().containsFamilyObject(exRelation)) {
+                tempPerson1.getFamilyConnections().removeFamilyObject(exRelation);
             }
             // Checking whether the temp exRelation exists in personTwo's familyConnections
-            else if (tempPerson1.getFamilyConnections().contains(tempRelation)) {
-                tempPerson1.getFamilyConnections().remove(tempRelation);
+            else if (tempPerson1.getFamilyConnections().containsFamilyObject(tempRelation)) {
+                tempPerson1.getFamilyConnections().removeFamilyObject(tempRelation);
             }
         }
 
         // Checking whether the temp exRelation exists in personOne's familyConnections
-        else if (this.familyConnections.contains(tempRelation)) {
-            this.familyConnections.remove(tempRelation);
+        else if (this.familyConnections.containsFamilyObject(tempRelation)) {
+            this.familyConnections.removeFamilyObject(tempRelation);
 
             // Checking whether the original exRelation exists in personTwo's familyConnections
-            if (tempPerson1.getFamilyConnections().contains(exRelation)) {
-                tempPerson1.getFamilyConnections().remove(exRelation);
+            if (tempPerson1.getFamilyConnections().containsFamilyObject(exRelation)) {
+                tempPerson1.getFamilyConnections().removeFamilyObject(exRelation);
             }
             // Checking whether the temp exRelation exists in personTwo's familyConnections
-            else if (tempPerson1.getFamilyConnections().contains(tempRelation)) {
-                tempPerson1.getFamilyConnections().remove(tempRelation);
+            else if (tempPerson1.getFamilyConnections().containsFamilyObject(tempRelation)) {
+                tempPerson1.getFamilyConnections().removeFamilyObject(tempRelation);
             }
         }
 
@@ -234,6 +242,26 @@ public class DisasterVictim {
         else {
             throw new IllegalArgumentException("A relation that did not exist cannot be deleted in the first place!");
         }
+    }
+
+    private void removeFamilyObject(FamilyRelation object) {
+        for (FamilyRelation temp : this.familyConnections) {
+            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonOne() == object.getPersonOne() && 
+                temp.getRelationshipTo() == object.getRelationshipTo()) {
+                    this.familyConnections.remove(temp);
+            }
+        }
+    }
+
+    private boolean containsFamilyObject(FamilyRelation object) {
+        boolean check = false;
+        for (FamilyRelation temp : this.familyConnections) {
+            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonOne() == object.getPersonOne() && 
+                temp.getRelationshipTo() == object.getRelationshipTo()) {
+                    check = true;
+            }
+        }
+        return check;
     }
 
     public void addFamilyConnection(FamilyRelation relation) { 
@@ -251,12 +279,13 @@ public class DisasterVictim {
 
         // Check whether this relation already exists in familyConnections.
         // One is the original relation and the other is with personOne and personTwo switched.
-        if (this.familyConnections.contains(relation) || this.familyConnections.contains(tempRelation)) {
+        if (this.familyConnections.containsFamilyObject(relation) || this.familyConnections.containsFamilyObject(tempRelation)) {
             return;
         } 
         // Check whether the other person also has the relation with both types of relationship 
         // with personOne switched with personTwo in another relationship
-        else if (tempPerson1.getFamilyConnections().contains(relation) || tempPerson1.getFamilyConnections().contains(tempRelation)) {
+        else if (tempPerson1.getFamilyConnections().containsFamilyObject(relation) || 
+                tempPerson1.getFamilyConnections().containsFamilyObject(tempRelation)) {
             // If it had it, that means the other person did not have the relationship so add it to personOne's familyConnections
             this.familyConnections.add(relation);
             return;
@@ -265,7 +294,7 @@ public class DisasterVictim {
         // personTwo's familyConnections
         else {
             this.familyConnections.add(relation);
-            tempPerson1.getFamilyConnections().add(relation);
+            tempPerson1.getFamilyConnections().add(tempRelation);
         }
     }
 
