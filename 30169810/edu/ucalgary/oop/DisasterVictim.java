@@ -246,7 +246,7 @@ public class DisasterVictim {
 
     private void removeFamilyObject(FamilyRelation object) {
         for (FamilyRelation temp : this.familyConnections) {
-            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonOne() == object.getPersonOne() && 
+            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
                 temp.getRelationshipTo() == object.getRelationshipTo()) {
                     this.familyConnections.remove(temp);
             }
@@ -256,7 +256,7 @@ public class DisasterVictim {
     private boolean containsFamilyObject(FamilyRelation object) {
         boolean check = false;
         for (FamilyRelation temp : this.familyConnections) {
-            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonOne() == object.getPersonOne() && 
+            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
                 temp.getRelationshipTo() == object.getRelationshipTo()) {
                     check = true;
             }
