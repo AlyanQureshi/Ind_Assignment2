@@ -2,12 +2,15 @@
 
 package edu.ucalgary.oop;
 
-import org.junit.*;
-import static org.junit.Assert.*;
 import java.util.Vector;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
+import java.util.List;
 
 
 public class DisasterVictim {
@@ -15,7 +18,7 @@ public class DisasterVictim {
 
     private String firstName;
     private String lastName;
-    private String dateOfBirth;
+    private String dateOfBirth = "";
     private final int ASSIGNED_SOCIAL_ID;
     private HashSet<FamilyRelation> familyConnections = new HashSet<>();
     private Vector<MedicalRecord> medicalRecords = new Vector<>();
@@ -23,10 +26,21 @@ public class DisasterVictim {
     private Location currentLocation;
     private final String ENTRY_DATE;
     private String gender;
-    private String[] genderOptions;
+    private static String[] genderOptions;
     private String comments;
-    private int age;
+    private int age = 0;
     private String [] mealRestrictions;
+    enum DietRestrictions {
+        AVML,
+        DBML,
+        GFML,
+        KSML,
+        LSML,
+        MOML,
+        PFML,
+        VGML,
+        VJML
+    }
 
     public DisasterVictim(String firstName, String ENTRY_DATE) {
         this.firstName = firstName;
@@ -56,10 +70,10 @@ public class DisasterVictim {
             throw new IllegalArgumentException("Invalid date format for entry date. Expected format: YYYY-MM-DD");
         }
         this.ENTRY_DATE = ENTRY_DATE;
-        if (!isValidDateFormat(dataOfBirth)) {
+        if (!isValidDateFormat(dateOfBirth)) {
             throw new IllegalArgumentException("Invalid date format for date of birth. Expected format: YYYY-MM-DD");
         }
-        this.dataOfBirth = dataOfBirth;
+        this.dateOfBirth = dateOfBirth;
         this.ASSIGNED_SOCIAL_ID = generateSocialID();
         
     }
@@ -102,7 +116,7 @@ public class DisasterVictim {
             throw new IllegalArgumentException("Invalid date format for date of birth. Expected format: YYYY-MM-DD");
         }
         // Making sure that age is NULL when we set dateOfBirth
-        else if (age) {
+        else if (age != 0) {
             throw new IllegalArgumentException("Cannot set dateOfBirth since age already has a value!");
         }
         // If date has a valid format and age does not have a value, set dateOfBirth
@@ -120,7 +134,7 @@ public class DisasterVictim {
             throw new IllegalArgumentException("Invalid age, please put a valid integer for age!");
         }
         // Making sure that dateOfBirth is NULL when we set age
-        else if (dateOfBirth) {
+        else if (dateOfBirth != "") {
             throw new IllegalArgumentException("Cannot set age since dateOfBirth already has a value!");
         }
         // If age has a valid number and dateOfBirth does not have a value, set age
@@ -229,7 +243,7 @@ public class DisasterVictim {
         }
         // if disaster victim did have that many supplies to begin with, throw an IllegalArgumentException
         else {
-            throw new IllegalArgumentException("The disasater victim is giving out more supplies than what he actually has!")
+            throw new IllegalArgumentException("The disasater victim is giving out more supplies than what he actually has!");
         }
     }
 
@@ -274,7 +288,7 @@ public class DisasterVictim {
         }
     }
 
-    private void removeFamilyObject(FamilyRelation object) {
+    public void removeFamilyObject(FamilyRelation object) {
         for (FamilyRelation temp : this.familyConnections) {
             if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
                 temp.getRelationshipTo() == object.getRelationshipTo()) {
@@ -283,7 +297,7 @@ public class DisasterVictim {
         }
     }
 
-    private boolean containsFamilyObject(FamilyRelation object) {
+    public boolean containsFamilyObject(FamilyRelation object) {
         boolean check = false;
         for (FamilyRelation temp : this.familyConnections) {
             if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
@@ -358,11 +372,95 @@ public class DisasterVictim {
     }
 
     public void setGender(String gender) {
-        if (!gender.matches("(?i)^(male|female|other)$")) {
-            throw new IllegalArgumentException("Invalid gender. Acceptable values are male, female, or other.");
+    
+        List<String> genderOptionsList = Arrays.asList(genderOptions);
+
+        if (!genderOptionsList.contains(gender.toLowerCase())) {
+            throw new IllegalArgumentException("Invalid gender. Acceptable values are: " + Arrays.toString(genderOptions));
         }
+        
         this.gender = gender.toLowerCase(); // Store in a consistent format
     }
 
+    public void getGenderOptions() {
+        return genderOptions;
+    }
+
+    public static void setGenderOptions() {
+        try {
+            // Read all lines from the file into a List<String>
+            List<String> lines = Files.readAllLines(Paths.get("GenderOptions.txt"));
+            
+            // Convert the list to an array
+            genderOptions = lines.toArray(new String[0]);
+            
+            // Print the contents of the array (for verification)
+            for (String option : genderOptions) {
+                System.out.println(option);
+            }
+        } catch (IOException e) {
+            System.err.println("An error occurred while reading the file: " + e.getMessage());
+            // Optionally, you can log the stack trace for debugging purposes
+            e.printStackTrace();
+        }
+    }
+
+    public String[] getDietaryRestrictions() {
+        return mealRestrictions;
+    }
+
+    public void setDietaryRestrictions(String[] mealRestrictions) {
+        Set<String> validRestrictions = new HashSet<>();
+        for (DietRestrictions restriction : DietRestrictions.values()) {
+            validRestrictions.add(restriction.toString());
+        }
+
+        for (String option : mealRestrictions) {
+            if (!validRestrictions.contains(option)) {
+                throw new IllegalArgumentException("This dietary restriction does not exist: " + option);
+            }
+        }
+
+        this.mealRestrictions = mealRestrictions;
+    }
+
+    public static void readDietOptions() {
+        // Iterate over mealRestrictions and call commentOnMeal for each restriction
+        for (String restriction : mealRestrictions) {
+            commentOnMeal(DietRestrictions.valueOf(restriction));
+        }
+    }
+
+    public static void commentOnMeal(DietRestrictions meal) {
+        switch(meal) {
+            case AVML:
+                System.out.println(meal + ": Asian vegetarian meal.");
+                break;
+            case DBML:
+                System.out.println(meal + ": Diabetic meal.");
+                break;
+            case GFML:
+                System.out.println(meal + ": Gluten intolerant meal.");
+                break;
+            case KSML:
+                System.out.println(meal + ": Kosher meal.");
+                break;
+            case LSML:
+                System.out.println(meal + ": Low salt meal.");
+                break;
+            case MOML:
+                System.out.println(meal + ": Muslim meal.");
+                break;
+            case PFML:
+                System.out.println(meal + ": Peanut-free meal.");
+                break;
+            case VGML:
+                System.out.println(meal + ": Vegan meal.");
+                break;
+            case VJML:
+                System.out.println(meal + ": Vegetarian Jain meal.");
+                break;
+        }
+    }
    
 }
