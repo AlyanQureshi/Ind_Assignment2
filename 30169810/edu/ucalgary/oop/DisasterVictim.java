@@ -20,6 +20,7 @@ public class DisasterVictim {
     private HashSet<FamilyRelation> familyConnections = new HashSet<>();
     private Vector<MedicalRecord> medicalRecords = new Vector<>();
     private HashSet<Supply> personalBelongings = new HashSet<>();
+    private Location currentLocation;
     private final String ENTRY_DATE;
     private String gender;
     private String[] genderOptions;
@@ -144,7 +145,6 @@ public class DisasterVictim {
         return personalBelongings;
     }
     
-    // Correct the setters to accept Lists instead of arrays
     public void setFamilyConnections(HashSet<FamilyRelation> connections) {
         this.familyConnections.clear();
         for (FamilyRelation newConnection : connections) {
@@ -152,54 +152,84 @@ public class DisasterVictim {
         }
     }
 
-    public void setMedicalRecords(MedicalRecord[] records) {
+    public void setMedicalRecords(Vector<MedicalRecord> records) {
         this.medicalRecords.clear();
         for (MedicalRecord newRecord : records) {
             addMedicalRecord(newRecord);
         }
     }
 
-    public void setPersonalBelongings(Supply[] belongings) {
-        this.personalBelongings = belongings;
+    public void setPersonalBelongings(HashSet<Supply> belongings) {
+        this.personalBelongings.clear();
+        for (Supply newSupply : belongings) {
+            addPersonalBelonging(newSupply);
+        }
     }
 
     // Add a Supply to personalBelonging
     public void addPersonalBelonging(Supply supply) {
-
-        if (this.personalBelongings == null) {
-            Supply tmpSupply[] = { supply };
-            this.setPersonalBelongings(tmpSupply);
-            return;
+        boolean locationCheck = false;
+        boolean suppliesAlreadyUpdated = false;
+        // Find out whether there is enough supply at the current location and make locationCheck = true
+        for (Supply temp : this.currentLocation.getSupplies()) {
+            if ((temp.getType() == supply.getType()) && ((temp.getQuantity() - supply.getQuantity()) >= 0)) {
+                // Remove supply from current location
+                this.currentLocation.removeSupply(supply);
+                locationCheck = true;
+                break;
+            }
         }
 
-        // Create an array one larger than the previous array
-        int newLength = this.personalBelongings.length + 1;
-        Supply tmpPersonalBelongings[] = new Supply[newLength];
+        // If supply exists at the location add it to our own personal belongings
+        if (locationCheck) {
+            // Find out whether the we already have this item and add the supplies quantity to its previous quantity
+            for (Supply temp : this.personalBelongings) {
+                if (temp.getType() == supply.getType()) {
+                    int newTotal = temp.getQuantity() + supply.getQuantity();
+                    temp.setQuantity(newTotal);
+                    suppliesAlreadyUpdated = true;
+                    break;
+                }
+            }
 
-        // Copy all the items in the current array to the new array
-        int i;
-        for (i=0; i < personalBelongings.length; i++) {
-            tmpPersonalBelongings[i] = this.personalBelongings[i];
+            // if this item does not already exist, add the entire Supply object to our personal belongings
+            if (!suppliesAlreadyUpdated) {
+                this.personalBelongings.add(supply);
+            }
+        } 
+
+        // Throw an error since there was not enough supply at the location.
+        else {
+            throw new IllegalArgumentException("These supplies cannot be given to the disaster victim as there are not enough at the location!");
         }
-
-        // Add the new element at the end of the new array
-        tmpPersonalBelongings[i] = supply;
-
-        // Replace the original array with the new array
-        this.personalBelongings = tmpPersonalBelongings;
     }
 
     // Remove a Supply from personalBelongings, we assume it only appears once
     public void removePersonalBelonging(Supply unwantedSupply) {
-        Supply[] updatedBelongings = new Supply[personalBelongings.length-1];
-        int index = 0;
-        int newIndex = index;
-        for (Supply supply : personalBelongings) {
-            if (!supply.equals(unwantedSupply)) {
-                updatedBelongings[newIndex] = supply;
-                newIndex++;
-            }
-            index++;
+        boolean personalBelongingUpdated = false;
+        // Find out whether there is enough supplies for the disaster victim to even give out
+        // If there are enough, change the quantity to its reduced quantity
+        for (Supply temp : this.personalBelongings) {
+            if ((temp.getType() == unwantedSupply.getType()) && ((temp.getQuantity() - unwantedSupply.getQuantity()) >= 0)) {
+                int newQuantity = temp.getQuantity() - unwantedSupply.getQuantity();
+                // Remove that supply, if quantity is 0.
+                if (newQuantity == 0) {
+                    this.personalBelongings.remove(temp);
+                } else {
+                    temp.setQuantity(newQuantity);
+                }
+                personalBelongingUpdated = true; 
+                break;
+            }     
+        }
+
+        // Since we removed supply from personal belonging, add that unwanted supply back into location
+        if (personalBelongingUpdated) {
+            this.currentLocation.addSupply(unwantedSupply);
+        }
+        // if disaster victim did have that many supplies to begin with, throw an IllegalArgumentException
+        else {
+            throw new IllegalArgumentException("The disasater victim is giving out more supplies than what he actually has!")
         }
     }
 
@@ -286,7 +316,7 @@ public class DisasterVictim {
         // with personOne switched with personTwo in another relationship
         else if (tempPerson1.getFamilyConnections().containsFamilyObject(relation) || 
                 tempPerson1.getFamilyConnections().containsFamilyObject(tempRelation)) {
-            // If it had it, that means the other person did not have the relationship so add it to personOne's familyConnections
+            // If the other person had it, that means the first person did not have the relationship so add it to personOne's familyConnections
             this.familyConnections.add(relation);
             return;
         }
@@ -298,10 +328,17 @@ public class DisasterVictim {
         }
     }
 
-
     // Add a MedicalRecord to medicalRecords
     public void addMedicalRecord(MedicalRecord record) {
-        medicalRecords.add(record);
+        this.medicalRecords.add(record);
+    }
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(Location newLocation) {
+        this.currentLocation = newLocation;
     }
 
     public String getEntryDate() {
