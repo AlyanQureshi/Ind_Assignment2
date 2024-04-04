@@ -212,7 +212,7 @@ public class DisasterVictim {
         for (Supply temp : this.personalBelongings) {
             if ((temp.getType() == unwantedSupply.getType()) && ((temp.getQuantity() - unwantedSupply.getQuantity()) >= 0)) {
                 int newQuantity = temp.getQuantity() - unwantedSupply.getQuantity();
-                // Remove that supply, if quantity is 0.
+                // Remove that supply, if quantity is 0
                 if (newQuantity == 0) {
                     this.personalBelongings.remove(temp);
                 } else {
@@ -220,7 +220,7 @@ public class DisasterVictim {
                 }
                 personalBelongingUpdated = true; 
                 break;
-            }     
+            }
         }
 
         // Since we removed supply from personal belonging, add that unwanted supply back into location
