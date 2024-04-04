@@ -350,7 +350,7 @@ public class DisasterVictim {
     }
 
     public void setComments(String comments) {
-        this.comments =  comments;
+        this.comments = comments;
     }
 
     public String getGender() {
