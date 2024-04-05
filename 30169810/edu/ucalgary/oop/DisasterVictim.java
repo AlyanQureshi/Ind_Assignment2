@@ -23,7 +23,6 @@ public class DisasterVictim {
     private HashSet<FamilyRelation> familyConnections = new HashSet<>();
     private Vector<MedicalRecord> medicalRecords = new Vector<>();
     private HashSet<Supply> personalBelongings = new HashSet<>();
-    private Location currentLocation;
     private final String ENTRY_DATE;
     private String gender;
     private static String[] genderOptions;
@@ -173,22 +172,22 @@ public class DisasterVictim {
         }
     }
 
-    public void setPersonalBelongings(HashSet<Supply> belongings) {
+    public void setPersonalBelongings(HashSet<Supply> belongings, Location currLocation) {
         this.personalBelongings.clear();
         for (Supply newSupply : belongings) {
-            addPersonalBelonging(newSupply);
+            addPersonalBelonging(newSupply, currLocation);
         }
     }
 
     // Add a Supply to personalBelonging
-    public void addPersonalBelonging(Supply supply) {
+    public void addPersonalBelonging(Supply supply, Location currentLocation) {
         boolean locationCheck = false;
         boolean suppliesAlreadyUpdated = false;
         // Find out whether there is enough supply at the current location and make locationCheck = true
-        for (Supply temp : this.currentLocation.getSupplies()) {
+        for (Supply temp : currentLocation.getSupplies()) {
             if ((temp.getType() == supply.getType()) && ((temp.getQuantity() - supply.getQuantity()) >= 0)) {
                 // Remove supply from current location
-                this.currentLocation.removeSupply(supply);
+                currentLocation.removeSupply(supply);
                 locationCheck = true;
                 break;
             }
@@ -196,7 +195,7 @@ public class DisasterVictim {
 
         // If supply exists at the location add it to our own personal belongings
         if (locationCheck) {
-            // Find out whether the we already have this item and add the supplies quantity to its previous quantity
+            // Find out whether we already have this item and add the supplies quantity to its previous quantity
             for (Supply temp : this.personalBelongings) {
                 if (temp.getType() == supply.getType()) {
                     int newTotal = temp.getQuantity() + supply.getQuantity();
@@ -219,7 +218,7 @@ public class DisasterVictim {
     }
 
     // Remove a Supply from personalBelongings, we assume it only appears once
-    public void removePersonalBelonging(Supply unwantedSupply) {
+    public void removePersonalBelonging(Supply unwantedSupply, Location currentLocation) {
         boolean personalBelongingUpdated = false;
         // Find out whether there is enough supplies for the disaster victim to even give out
         // If there are enough, change the quantity to its reduced quantity
@@ -239,7 +238,7 @@ public class DisasterVictim {
 
         // Since we removed supply from personal belonging, add that unwanted supply back into location
         if (personalBelongingUpdated) {
-            this.currentLocation.addSupply(unwantedSupply);
+            currentLocation.addSupply(unwantedSupply);
         }
         // if disaster victim did have that many supplies to begin with, throw an IllegalArgumentException
         else {
@@ -255,30 +254,12 @@ public class DisasterVictim {
         FamilyRelation tempRelation = new FamilyRelation(tempPerson1, tempRelationship, tempPerson2);
 
         // Checking whether the original exRelation exists in personOne's familyConnections
-        if (this.familyConnections.containsFamilyObject(exRelation)) {
-            this.familyConnections.removeFamilyObject(exRelation);
-            
-            // Checking whether the original exRelation exists in personTwo's familyConnections
-            if (tempPerson1.getFamilyConnections().containsFamilyObject(exRelation)) {
-                tempPerson1.getFamilyConnections().removeFamilyObject(exRelation);
-            }
-            // Checking whether the temp exRelation exists in personTwo's familyConnections
-            else if (tempPerson1.getFamilyConnections().containsFamilyObject(tempRelation)) {
-                tempPerson1.getFamilyConnections().removeFamilyObject(tempRelation);
-            }
-        }
-
-        // Checking whether the temp exRelation exists in personOne's familyConnections
-        else if (this.familyConnections.containsFamilyObject(tempRelation)) {
-            this.familyConnections.removeFamilyObject(tempRelation);
-
-            // Checking whether the original exRelation exists in personTwo's familyConnections
-            if (tempPerson1.getFamilyConnections().containsFamilyObject(exRelation)) {
-                tempPerson1.getFamilyConnections().removeFamilyObject(exRelation);
-            }
-            // Checking whether the temp exRelation exists in personTwo's familyConnections
-            else if (tempPerson1.getFamilyConnections().containsFamilyObject(tempRelation)) {
-                tempPerson1.getFamilyConnections().removeFamilyObject(tempRelation);
+        if (this.containsFamilyObject(exRelation)) {
+            this.removeFamilyObject(exRelation);
+        
+            // Checking whether the opposite relation exists in personTwo's familyConnections
+            if (tempPerson1.containsFamilyObject(tempRelation)) {
+                tempPerson1.removeFamilyObject(tempRelation);
             }
         }
 
@@ -322,14 +303,11 @@ public class DisasterVictim {
         // in each of their respective familyConnections variable.
 
         // Check whether this relation already exists in familyConnections.
-        // One is the original relation and the other is with personOne and personTwo switched.
-        if (this.familyConnections.containsFamilyObject(relation) || this.familyConnections.containsFamilyObject(tempRelation)) {
+        if (this.containsFamilyObject(relation)) {
             return;
         } 
-        // Check whether the other person also has the relation with both types of relationship 
-        // with personOne switched with personTwo in another relationship
-        else if (tempPerson1.getFamilyConnections().containsFamilyObject(relation) || 
-                tempPerson1.getFamilyConnections().containsFamilyObject(tempRelation)) {
+        // Check whether the other person also has the opposite relation
+        else if (tempPerson1.containsFamilyObject(tempRelation)) {
             // If the other person had it, that means the first person did not have the relationship so add it to personOne's familyConnections
             this.familyConnections.add(relation);
             return;
@@ -340,19 +318,13 @@ public class DisasterVictim {
             this.familyConnections.add(relation);
             tempPerson1.getFamilyConnections().add(tempRelation);
         }
+
+
     }
 
     // Add a MedicalRecord to medicalRecords
     public void addMedicalRecord(MedicalRecord record) {
         this.medicalRecords.add(record);
-    }
-
-    public Location getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(Location newLocation) {
-        this.currentLocation = newLocation;
     }
 
     public String getEntryDate() {
