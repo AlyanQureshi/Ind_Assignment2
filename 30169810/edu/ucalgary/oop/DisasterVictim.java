@@ -457,7 +457,7 @@ public class DisasterVictim {
             try {
                 // Read all lines from the file into a List<String>
                 List<String> lines = 
-                Files.readAllLines(Paths.get("C:\\Ensf380\\Individual Assignment\\Ind_Assignment2\\30169810\\edu\\ucalgary\\oop\\GenderOptions.txt"));
+                Files.readAllLines(Paths.get("GenderOptions.txt"));
                 
                 // Convert the list to an array
                 options = lines.toArray(new String[0]);
