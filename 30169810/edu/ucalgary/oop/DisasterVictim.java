@@ -247,19 +247,18 @@ public class DisasterVictim {
     }
 
     public void removeFamilyConnection(FamilyRelation exRelation) {
-        // Making a temp FamilyRelation object where personOne and personTwo are switched for checking purposes.  
-        DisasterVictim tempPerson1 = exRelation.getPersonTwo();
-        DisasterVictim tempPerson2 = exRelation.getPersonOne();
-        String tempRelationship = exRelation.getRelationshipTo();
-        FamilyRelation tempRelation = new FamilyRelation(tempPerson1, tempRelationship, tempPerson2);
+        // Making a oppositeRelationship FamilyRelation object where personOne and personTwo are switched for checking purposes.  
+        FamilyRelation oppositeRelationship = reverseFamilyRelation(relation);
+
+        DisasterVictim otherPerson = oppositeRelationship.getPersonOne();
 
         // Checking whether the original exRelation exists in personOne's familyConnections
         if (this.containsFamilyObject(exRelation)) {
             this.removeFamilyObject(exRelation);
         
             // Checking whether the opposite relation exists in personTwo's familyConnections
-            if (tempPerson1.containsFamilyObject(tempRelation)) {
-                tempPerson1.removeFamilyObject(tempRelation);
+            if (otherPerson.containsFamilyObject(oppositeRelationship)) {
+                otherPerson.removeFamilyObject(oppositeRelationship);
             }
         }
 
@@ -269,7 +268,7 @@ public class DisasterVictim {
         }
     }
 
-    public void removeFamilyObject(FamilyRelation object) {
+    private void removeFamilyObject(FamilyRelation object) {
         for (FamilyRelation temp : this.familyConnections) {
             if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
                 temp.getRelationshipTo() == object.getRelationshipTo()) {
@@ -278,7 +277,7 @@ public class DisasterVictim {
         }
     }
 
-    public boolean containsFamilyObject(FamilyRelation object) {
+    private boolean containsFamilyObject(FamilyRelation object) {
         boolean check = false;
         for (FamilyRelation temp : this.familyConnections) {
             if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
@@ -290,36 +289,129 @@ public class DisasterVictim {
     }
 
     public void addFamilyConnection(FamilyRelation relation) { 
-        // Making a temp FamilyRelation object where personOne and personTwo are switched for checking purposes.    
-        DisasterVictim tempPerson1 = relation.getPersonTwo();
-        DisasterVictim tempPerson2 = relation.getPersonOne();
-        String tempRelationship = relation.getRelationshipTo();
-        FamilyRelation tempRelation = new FamilyRelation(tempPerson1, tempRelationship, tempPerson2);
+        // Making a opposite relation object where personOne and 
+        // personTwo are switched as well as relationship is switched    
+        FamilyRelation oppositeRelationship = reverseFamilyRelation(relation);
 
-        // NOTE: The following if statements also handle the case where there is a series of relationships
-        // For example, if Peace and Sam also have a sibling Diamond, we 
-        // will have a situation where Peace and Sam's, and Peace
-        // and Diamond's, and Diamond and Sam's relationship are all present 
-        // in each of their respective familyConnections variable.
+        DisasterVictim otherPerson = oppositeRelationship.getPersonOne();
 
         // Check whether this relation already exists in familyConnections.
         if (this.containsFamilyObject(relation)) {
             return;
         } 
         // Check whether the other person also has the opposite relation
-        else if (tempPerson1.containsFamilyObject(tempRelation)) {
+        else if (otherPerson.containsFamilyObject(oppositeRelationship)) {
             // If the other person had it, that means the first person did not have the relationship so add it to personOne's familyConnections
             this.familyConnections.add(relation);
-            return;
         }
         // If both people did not have the relatioships, then add it to both personOne's familyConnections and 
         // personTwo's familyConnections
         else {
             this.familyConnections.add(relation);
-            tempPerson1.getFamilyConnections().add(tempRelation);
+            otherPerson.getFamilyConnections().add(oppositeRelationship);
         }
 
+        // Check whether family consistency is needed
+        if ((this.connectionRepeats(familyConnections) == 2) && (otherPerson.connectionRepeats(otherPerson.getFamilyConnections()) == 1)) {
+            FamilyRelation newFamilyConnection = ensureFamilyConsistency(familyConnections);
+            FamilyRelation newOppositeConnection = reverseFamilyRelation(newFamilyConnection);
 
+            DisasterVictim newPerson1 = newFamilyConnection.getPersonOne();
+            DisasterVictim newPerson2 = newFamilyConnection.getPersonTwo();
+
+            newPerson1.getFamilyConnections().add(newFamilyConnection);
+            newPerson2.getFamilyConnections().add(newOppositeConnection);
+        }
+    }
+
+    public FamilyRelation ensureFamilyConsistency(HashSet<FamilyRelation> familyConnections) {
+        FamilyRelation relation1;
+        FamilyRelation relation2;
+        
+        int i = 0;
+        for (FamilyRelation object : familyConnections) {
+            if (i == 0) {
+                relation1 = object;
+            }
+            else if (i == 1) {
+                relation2 = object;
+            }
+            else {
+                break;
+            }
+            i++;
+        }
+
+        DisasterVictim newPerson1;
+        DisasterVictim newPerson2;
+        String finalRelationship;
+        String relationshipOne = relation1.getRelationshipTo();
+        String relationshipTwo = relation2.getRelationshipTo();
+
+        if ((relationshipOne == "sibling") && (relationshipTwo == "sibling")) {
+            newPerson1 = relation1.getPersonTwo();
+            finalRelationship = "sibling";
+            newPerson2 = relation2.getPersonTwo();
+        } // Second if
+        else if ((relationshipOne == "parent") && (relationshipTwo == "spouse")) {
+            newPerson1 = relation2.getPersonTwo();
+            finalRelationship = "parent";
+            newPerson2 = relation1.getPersonTwo();
+        } // third if
+        else if ((relationshipOne == "spouse") && (relationshipTwo == "parent")) {
+            newPerson1 = relation1.getPersonTwo();
+            finalRelationship = "parent";
+            newPerson2 = relation2.getPersonTwo();
+        } // fourth if
+        else if ((relationshipOne == "child") && (relationshipTwo == "sibling")) {
+            newPerson1 = relation2.getPersonTwo();
+            finalRelationship = "child";
+            newPerson2 = relation1.getPersonTwo();
+        } // fifth if
+        else if ((relationshipOne == "sibling") && (relationshipTwo == "child")) {
+            newPerson1 = relation1.getPersonTwo();
+            finalRelationship = "child";
+            newPerson2 = relation2.getPersonTwo();
+        } // sixth if
+        else if ((relationshipOne == "child") && (relationshipTwo == "child")) {
+            newPerson1 = relation1.getPersonTwo();
+            finalRelationship = "spouse";
+            newPerson2 = relation2.getPersonTwo();
+        } // seventh if
+        else if ((relationshipOne == "parent") && (relationshipTwo == "parent")) {
+            newPerson1 = relation1.getPersonTwo();
+            finalRelationship = "sibling";
+            newPerson2 = relation2.getPersonTwo();
+        }
+        FamilyRelation newConnection = new FamilyRelation(newPerson1, finalRelationship, newPerson2);
+
+        return newConnection;
+    }
+
+    private FamilyRelation reverseFamilyRelation(FamilyRelation connection) {
+        DisasterVictim tempPerson1 = connection.getPersonTwo();
+        DisasterVictim tempPerson2 = connection.getPersonOne();
+        String oppositeRelationship;
+
+        if (connection.getRelationshipTo() == "parent") {
+            oppositeRelationship = "child";
+        }
+        else if (connection.getRelationshipTo() == "child") {
+            oppositeRelationship = "parent";
+        }
+        else {
+            oppositeRelationship = connection.getRelationshipTo();
+        }
+        FamilyRelation oppRelation = new FamilyRelation(tempPerson1, oppositeRelationship, tempPerson2);
+        return oppRelation;
+    }
+
+    private boolean connectionRepeats(HashSet<FamilyRelation> familyConnections) {
+        int count = 0;
+        for (FamilyRelation temp : familyConnections) {
+            count++;
+        }
+        return count;
     }
 
     // Add a MedicalRecord to medicalRecords
