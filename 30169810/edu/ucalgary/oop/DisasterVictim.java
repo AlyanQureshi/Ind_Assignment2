@@ -5,6 +5,7 @@ package edu.ucalgary.oop;
 import java.util.Vector;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.nio.file.Files;
@@ -25,10 +26,10 @@ public class DisasterVictim {
     private HashSet<Supply> personalBelongings = new HashSet<>();
     private final String ENTRY_DATE;
     private String gender;
-    private static String[] genderOptions;
+    private static String[] genderOptions = setGenderOptions();
     private String comments;
     private int age = 0;
-    private String [] mealRestrictions;
+    private String[] mealRestrictions;
     enum DietRestrictions {
         AVML,
         DBML,
@@ -248,7 +249,7 @@ public class DisasterVictim {
 
     public void removeFamilyConnection(FamilyRelation exRelation) {
         // Making a oppositeRelationship FamilyRelation object where personOne and personTwo are switched for checking purposes.  
-        FamilyRelation oppositeRelationship = reverseFamilyRelation(relation);
+        FamilyRelation oppositeRelationship = reverseFamilyRelation(exRelation);
 
         DisasterVictim otherPerson = oppositeRelationship.getPersonOne();
 
@@ -325,8 +326,8 @@ public class DisasterVictim {
     }
 
     public FamilyRelation ensureFamilyConsistency(HashSet<FamilyRelation> familyConnections) {
-        FamilyRelation relation1;
-        FamilyRelation relation2;
+        FamilyRelation relation1 = null;
+        FamilyRelation relation2 = null;
         
         int i = 0;
         for (FamilyRelation object : familyConnections) {
@@ -342,9 +343,9 @@ public class DisasterVictim {
             i++;
         }
 
-        DisasterVictim newPerson1;
-        DisasterVictim newPerson2;
-        String finalRelationship;
+        DisasterVictim newPerson1 = null;
+        DisasterVictim newPerson2 = null;
+        String finalRelationship = null;
         String relationshipOne = relation1.getRelationshipTo();
         String relationshipTwo = relation2.getRelationshipTo();
 
@@ -406,7 +407,7 @@ public class DisasterVictim {
         return oppRelation;
     }
 
-    private boolean connectionRepeats(HashSet<FamilyRelation> familyConnections) {
+    private int connectionRepeats(HashSet<FamilyRelation> familyConnections) {
         int count = 0;
         for (FamilyRelation temp : familyConnections) {
             count++;
@@ -446,27 +447,31 @@ public class DisasterVictim {
         this.gender = gender.toLowerCase(); // Store in a consistent format
     }
 
-    public void getGenderOptions() {
-        return genderOptions;
+    public String getGenderOptions() {
+        return Arrays.toString(genderOptions);
     }
 
-    public static void setGenderOptions() {
-        try {
-            // Read all lines from the file into a List<String>
-            List<String> lines = Files.readAllLines(Paths.get("GenderOptions.txt"));
-            
-            // Convert the list to an array
-            genderOptions = lines.toArray(new String[0]);
-            
-            // Print the contents of the array (for verification)
-            for (String option : genderOptions) {
-                System.out.println(option);
+    public static String[] setGenderOptions() {
+        String[] options = null;
+        if (genderOptions == null) {
+            try {
+                // Read all lines from the file into a List<String>
+                List<String> lines = 
+                Files.readAllLines(Paths.get("C:\\Ensf380\\Individual Assignment\\Ind_Assignment2\\30169810\\edu\\ucalgary\\oop\\GenderOptions.txt"));
+                
+                // Convert the list to an array
+                options = lines.toArray(new String[0]);
+                
+            } catch (IOException e) {
+                System.err.println("An error occurred while reading the file: " + e.getMessage());
+                // Optionally, you can log the stack trace for debugging purposes
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            System.err.println("An error occurred while reading the file: " + e.getMessage());
-            // Optionally, you can log the stack trace for debugging purposes
-            e.printStackTrace();
         }
+        else {
+            options = genderOptions;
+        }
+        return options;
     }
 
     public String[] getDietaryRestrictions() {
@@ -488,7 +493,7 @@ public class DisasterVictim {
         this.mealRestrictions = mealRestrictions;
     }
 
-    public static void readDietOptions() {
+    public void readDietOptions() {
         // Iterate over mealRestrictions and call commentOnMeal for each restriction
         for (String restriction : mealRestrictions) {
             commentOnMeal(DietRestrictions.valueOf(restriction));
@@ -526,5 +531,11 @@ public class DisasterVictim {
                 break;
         }
     }
-   
+
+    public static void main(String[] args) {
+        DisasterVictim alyan = new DisasterVictim("alyan", "2024-02-02");
+        DisasterVictim bob = new DisasterVictim("bob", "2024-02-05");
+        System.out.println(alyan.getGenderOptions());
+        System.out.println(bob.getGenderOptions());
+    }
 }
