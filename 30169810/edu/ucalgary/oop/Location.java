@@ -2,13 +2,13 @@
 
 package edu.ucalgary.oop;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Location {
     private String name;
     private String address;
-    private ArrayList<DisasterVictim> occupants = new ArrayList<>(); // Initialized
-    private ArrayList<Supply> supplies = new ArrayList<>(); // Initialized
+    private HashSet<DisasterVictim> occupants = new HashSet<>(); // Initialized
+    private HashSet<Supply> supplies = new HashSet<>(); // Initialized
 
     // Constructor
     public Location(String name, String address) {
@@ -35,42 +35,97 @@ public class Location {
     }
 
     // Getter for occupants
-    public ArrayList<DisasterVictim> getOccupants() {
-        return new ArrayList<>(occupants); // Return a copy to maintain encapsulation
+    public HashSet<DisasterVictim> getOccupants() {
+        return new HashSet<>(occupants); // Return a copy to maintain encapsulation
     }
 
     // Setter for occupants
-    public void setOccupants(ArrayList<DisasterVictim> occupants) {
-        this.occupants = new ArrayList<>(occupants); // Clear and addAll in one step, maintains encapsulation
+    public void setOccupants(HashSet<DisasterVictim> occupants) {
+        this.occupants = new HashSet<>(occupants); // Clear and addAll in one step, maintains encapsulation
     }
 
     // Getter for supplies
-    public ArrayList<Supply> getSupplies() {
-        return new ArrayList<>(supplies); // Return a copy to maintain encapsulation
+    public HashSet<Supply> getSupplies() {
+        return new HashSet<>(supplies); // Return a copy to maintain encapsulation
     }
 
     // Setter for supplies
-    public void setSupplies(ArrayList<Supply> supplies) {
-        this.supplies = new ArrayList<>(supplies); // Clear and addAll in one step, maintains encapsulation
+    public void setSupplies(HashSet<Supply> supplies) {
+        this.supplies = new HashSet<>(supplies); // Clear and addAll in one step, maintains encapsulation
     }
 
     // Add an occupant to occupants
     public void addOccupant(DisasterVictim occupant) {
-        occupants.add(occupant);
+        boolean check = false;
+        for (DisasterVictim object : occupants) {
+            if (object == occupant) {
+                check = true;
+                break;
+            }
+        }
+
+        if (check) {
+            throw new IllegalArgumentException("This occupant already exists at this location and so
+                                                it cannot be added again!");
+        }
+        else {
+            occupants.add(occupant);
+        }
     }
 
     // Remove an occupant from occupants
     public void removeOccupant(DisasterVictim occupant) {
-        occupants.remove(occupant);
+        boolean check = false;
+        for (DisasterVictim object : occupants) {
+            if (object == occupant) {
+                occupants.remove(object);
+                check = true;
+                break;
+            }
+        }
+
+        if (!check) {
+            throw new IllegalArgumentException("This occupant did not exist at this location in the first place
+                                                so they cannot be removed!");
+        }
     }
 
     // Add a supply to supplies
     public void addSupply(Supply supply) {
-        supplies.add(supply);
+        boolean check = false;
+        for (Supply object : supplies) {
+            if (object.getName() == supply.getName()) {
+                int newQuantity = object.getQuantity() + supply.getQuantity();
+                object.setQuantity(newQuantity);
+                check = true;
+                break;
+            }
+        }
+
+        if (!check) {
+            supplies.add(supply);
+        }
     }
 
     // Remove a supply from supplies
     public void removeSupply(Supply supply) {
-        supplies.remove(supply);
+        boolean check = false;
+        for (Supply object : supplies) {
+            if ((object.getName() == supply.getName()) && ((object.getQuantity() - supply.getQuantity()) >= 0)) {
+                int newQuantity = object.getQuantity() - supply.getQuantity();
+                if (newQuantity == 0) {
+                    supplies.remove(object);
+                }
+                else {
+                    object.setQuantity(newQuantity);
+                }
+                check = true;
+                break;
+            }
+        }
+
+        if (!check) {
+            throw new IllegalArgumentException("Cannot remove more supplies than what are already at this location!");
+        }
     }
 }
