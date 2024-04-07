@@ -11,7 +11,12 @@ public class Inquirer {
         this.LAST_NAME = lastName;
         this.SERVICES_PHONE = phone;
         this.INFO = info;
+    }
 
+    public Inquirer(String firstName, String phone, String info) {
+        this.FIRST_NAME = firstName;
+        this.SERVICES_PHONE = phone;
+        this.INFO = info;
     }
 
     public String getFirstName() { return this.FIRST_NAME; }

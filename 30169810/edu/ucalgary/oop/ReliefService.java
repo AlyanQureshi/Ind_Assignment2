@@ -4,7 +4,7 @@ package edu.ucalgary.oop;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class ReliefService {
+public class ReliefService implements ReliefWorker{
     private Inquirer inquirer;
     private DisasterVictim missingPerson;
     private String dateOfInquiry;
@@ -84,5 +84,5 @@ public class ReliefService {
            ", Date of Inquiry: " + dateOfInquiry + 
            ", Info Provided: " + infoProvided + 
            ", Last Known Location: " + lastKnownLocation.getName();
-}
+    }
 }
