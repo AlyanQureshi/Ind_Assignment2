@@ -58,15 +58,14 @@ public class Location {
     public void addOccupant(DisasterVictim occupant) {
         boolean check = false;
         for (DisasterVictim object : occupants) {
-            if (object == occupant) {
+            if (object.getAssignedSocialID() == occupant.getAssignedSocialID()) {
                 check = true;
                 break;
             }
         }
 
         if (check) {
-            throw new IllegalArgumentException("This occupant already exists at this location and so
-                                                it cannot be added again!");
+            throw new IllegalArgumentException("This occupant already exists at this location and so it cannot be added again!");
         }
         else {
             occupants.add(occupant);
@@ -77,7 +76,7 @@ public class Location {
     public void removeOccupant(DisasterVictim occupant) {
         boolean check = false;
         for (DisasterVictim object : occupants) {
-            if (object == occupant) {
+            if (object.getAssignedSocialID() == occupant.getAssignedSocialID()) {
                 occupants.remove(object);
                 check = true;
                 break;
@@ -85,8 +84,7 @@ public class Location {
         }
 
         if (!check) {
-            throw new IllegalArgumentException("This occupant did not exist at this location in the first place
-                                                so they cannot be removed!");
+            throw new IllegalArgumentException("This occupant did not exist at this location in the first place so they cannot be removed!");
         }
     }
 
@@ -94,7 +92,7 @@ public class Location {
     public void addSupply(Supply supply) {
         boolean check = false;
         for (Supply object : supplies) {
-            if (object.getName() == supply.getName()) {
+            if (object.getType().equals(supply.getType())) {
                 int newQuantity = object.getQuantity() + supply.getQuantity();
                 object.setQuantity(newQuantity);
                 check = true;
@@ -111,7 +109,7 @@ public class Location {
     public void removeSupply(Supply supply) {
         boolean check = false;
         for (Supply object : supplies) {
-            if ((object.getName() == supply.getName()) && ((object.getQuantity() - supply.getQuantity()) >= 0)) {
+            if ((object.getType().equals(supply.getType())) && ((object.getQuantity() - supply.getQuantity()) >= 0)) {
                 int newQuantity = object.getQuantity() - supply.getQuantity();
                 if (newQuantity == 0) {
                     supplies.remove(object);

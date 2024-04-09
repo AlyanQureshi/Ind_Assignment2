@@ -15,6 +15,7 @@ public class Inquirer {
 
     public Inquirer(String firstName, String phone, String info) {
         this.FIRST_NAME = firstName;
+        this.LAST_NAME = null;
         this.SERVICES_PHONE = phone;
         this.INFO = info;
     }

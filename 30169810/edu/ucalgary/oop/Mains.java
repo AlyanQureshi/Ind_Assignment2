@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
-public class Mains implements VictimInterface, ReliefWorker{
+public class Mains implements ReliefWorker {
     private Connection dbConnect;
     private ResultSet results;
 
-    public void enterDisasterVictim() {
+    public void enterDisasterVictimInfo() {
         return;
     }
     

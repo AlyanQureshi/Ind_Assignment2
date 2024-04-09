@@ -4,8 +4,9 @@ package edu.ucalgary.oop;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Scanner;
 
-public class ReliefService implements ReliefWorker{
+public class ReliefService {
     private Inquirer inquirer;
     private DisasterVictim missingPerson;
     private String dateOfInquiry;
@@ -88,32 +89,45 @@ public class ReliefService implements ReliefWorker{
     }
 
     public static void main(String[] args) {
-
-        Mains myJDBC = new Mains();
-
-        myJDBC.createConnection();
-
-        myJDBC.addToInquiryLog(4, "2024-02-01", "YAYYYY!!!!");
-
-        myJDBC.close();
-    }    
-
-    public void placeHolderCode() {
         HashSet<Location> locationList = new HashSet<>();
         Location telusSpark = new Location("Telus Spark", "32 Spark Street");
         Location childHospital = new Location("Children's Hospital", "102 Child West");
-        DisasterVictim bob = new DisasterVictim("Bob", "2020-01-05");
-        DisasterVictim james = new DisasterVictim("ayan", "2021-01-05");
-        DisasterVictim alyan = new DisasterVictim("Alyan", "2022-01-05");
-        DisasterVictim kutta = new DisasterVictim("Kutta", "2023-01-05");
+        Location carnival = new Location("Helper Carnival", "20 Carnival Street");
 
-        telusSpark.addOccupant(bob);
-        telusSpark.addOccupant(james);
-        childHospital.addOccupant(alyan);
-        childHospital.addOccupant(kutta);
-        String partialFirstName = "Yan";
         locationList.add(telusSpark);
         locationList.add(childHospital);
-        findDisasterVictims(locationList, partialName);
-    }
+        locationList.add(carnival);
+
+        System.out.println("----------------------------------------");
+        System.out.println("");
+        System.out.println("Welcome to Los Pollos Hermanos!");
+        System.out.println("");
+        System.out.println("As a Relief Worker you have three locations to choose from: ");
+        System.out.println("");
+        for (Location object : locationList) {
+            System.out.println(object.getName() + ". Address: " + object.getAddress());
+        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("");
+        System.out.println("Are you a Location-based Relief Worker? Or a Central Relief Worker?");
+        System.out.println("Enter '1' to be a Location-based Relief Worker. ");  
+        System.out.print("Enter '0' to be Central Relief Worker: ");
+        
+        String input = scanner.nextLine();
+        if (input.equals("0")) {
+            System.out.println("CENTRAL");
+            //locationWorkerMain(locationList)
+        } else {
+            System.out.println("LOCATION!");
+        }
+        
+
+        
+        /*
+        Mains myJDBC = new Mains();
+        myJDBC.createConnection();
+        myJDBC.addToInquiryLog(4, "2024-02-01", "YAYYYY!!!!");
+        myJDBC.close();
+        */
+    }    
 }
