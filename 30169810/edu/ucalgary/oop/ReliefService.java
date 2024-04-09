@@ -93,41 +93,46 @@ public class ReliefService {
         Location telusSpark = new Location("Telus Spark", "32 Spark Street");
         Location childHospital = new Location("Children's Hospital", "102 Child West");
         Location carnival = new Location("Helper Carnival", "20 Carnival Street");
+        DisasterVictim alyan = new DisasterVictim("alyan", "2022-01-03");
+        DisasterVictim balyan = new DisasterVictim("balyan", "2019-01-03");
+        DisasterVictim dalyan = new DisasterVictim("ALyAn", "2021-01-03");
+        DisasterVictim libby = new DisasterVictim("foxxxxxx", "2024-01-03");
+        telusSpark.addOccupant(alyan);
+        carnival.addOccupant(balyan);
+        childHospital.addOccupant(dalyan);
+        telusSpark.addOccupant(libby);
 
         locationList.add(telusSpark);
         locationList.add(childHospital);
         locationList.add(carnival);
+        System.out.println("");
 
-        System.out.println("----------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------");
         System.out.println("");
         System.out.println("Welcome to Los Pollos Hermanos!");
         System.out.println("");
-        System.out.println("As a Relief Worker you have three locations to choose from: ");
-        System.out.println("");
-        for (Location object : locationList) {
-            System.out.println(object.getName() + ". Address: " + object.getAddress());
-        }
+        
         Scanner scanner = new Scanner(System.in);
-        System.out.println("");
         System.out.println("Are you a Location-based Relief Worker? Or a Central Relief Worker?");
-        System.out.println("Enter '1' to be a Location-based Relief Worker. ");  
-        System.out.print("Enter '0' to be Central Relief Worker: ");
+        System.out.println("Enter '0' login as a Central Relief Worker. ");  
+        System.out.print("Enter '1' to login as a Location-based Relief Worker: ");
         
         String input = scanner.nextLine();
-        if (input.equals("0")) {
-            System.out.println("CENTRAL");
-            //locationWorkerMain(locationList)
-        } else {
-            System.out.println("LOCATION!");
-        }
-        
 
+        Mains main = new Mains();
+
+        if (input.equals("0")) {
+            main.centralWorkerMain(locationList, scanner);
+            
+        } else {
+            main.locationWorkerMain(locationList, scanner);
+        }
+
+        System.out.println("");
+        System.out.println("PROGRAM HAS FINISHED");
+        System.out.println("");
+        System.out.println("--------------------------------------------------------------------------------");
         
-        /*
-        Mains myJDBC = new Mains();
-        myJDBC.createConnection();
-        myJDBC.addToInquiryLog(4, "2024-02-01", "YAYYYY!!!!");
-        myJDBC.close();
-        */
+         
     }    
 }
