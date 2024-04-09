@@ -3,6 +3,7 @@
 package edu.ucalgary.oop;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 
 public class ReliefService implements ReliefWorker{
     private Inquirer inquirer;
@@ -84,5 +85,35 @@ public class ReliefService implements ReliefWorker{
            ", Date of Inquiry: " + dateOfInquiry + 
            ", Info Provided: " + infoProvided + 
            ", Last Known Location: " + lastKnownLocation.getName();
+    }
+
+    public static void main(String[] args) {
+
+        Mains myJDBC = new Mains();
+
+        myJDBC.createConnection();
+
+        myJDBC.addToInquiryLog(4, "2024-02-01", "YAYYYY!!!!");
+
+        myJDBC.close();
+    }    
+
+    public void placeHolderCode() {
+        HashSet<Location> locationList = new HashSet<>();
+        Location telusSpark = new Location("Telus Spark", "32 Spark Street");
+        Location childHospital = new Location("Children's Hospital", "102 Child West");
+        DisasterVictim bob = new DisasterVictim("Bob", "2020-01-05");
+        DisasterVictim james = new DisasterVictim("ayan", "2021-01-05");
+        DisasterVictim alyan = new DisasterVictim("Alyan", "2022-01-05");
+        DisasterVictim kutta = new DisasterVictim("Kutta", "2023-01-05");
+
+        telusSpark.addOccupant(bob);
+        telusSpark.addOccupant(james);
+        childHospital.addOccupant(alyan);
+        childHospital.addOccupant(kutta);
+        String partialFirstName = "Yan";
+        locationList.add(telusSpark);
+        locationList.add(childHospital);
+        findDisasterVictims(locationList, partialName);
     }
 }
