@@ -325,7 +325,7 @@ public class DisasterVictim {
         }
     }
 
-    public FamilyRelation ensureFamilyConsistency(HashSet<FamilyRelation> familyConnections) {
+    private FamilyRelation ensureFamilyConsistency(HashSet<FamilyRelation> familyConnections) {
         FamilyRelation relation1 = null;
         FamilyRelation relation2 = null;
         

@@ -73,7 +73,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
-    public void currentOccupants(Location location) {
+    private void currentOccupants(Location location) {
         Scanner scanner = new Scanner(System.in);
         boolean check = false;
         System.out.println("");
@@ -203,7 +203,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
-    public DisasterVictim newDisasterVictim(Scanner scanner) {
+    private DisasterVictim newDisasterVictim(Scanner scanner) {
         DisasterVictim newPerson = null;
         System.out.print("Please enter the person's first name: ");
         String firstName = scanner.nextLine();
@@ -448,7 +448,7 @@ public class Mains implements ReliefWorker {
         database.close();
     }
 
-    public String getInquirerPhoneNumber(int inquiryLogID) {
+    private String getInquirerPhoneNumber(int inquiryLogID) {
         String phoneNumber = null;
         try {
             String query = "SELECT INQUIRER.phoneNumber " +
@@ -471,7 +471,7 @@ public class Mains implements ReliefWorker {
         return phoneNumber;
     }
 
-    public void victimMoreInfo(String fName, HashSet<Location> allLocations) {
+    private void victimMoreInfo(String fName, HashSet<Location> allLocations) {
         String lowerName = fName.toLowerCase();
         for (Location place : allLocations) {
             for (DisasterVictim occupant : place.getOccupants()) {
@@ -492,7 +492,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
-    public HashMap<Integer, String> returnAllQueries() {
+    private HashMap<Integer, String> returnAllQueries() {
         HashMap<Integer, String> queries = new HashMap<>();
         try {
             Statement myStmt = dbConnect.createStatement();
@@ -603,7 +603,7 @@ public class Mains implements ReliefWorker {
         database.close();
     }
     
-    public void addNewInquirer(Inquirer newInquirer) {
+    private void addNewInquirer(Inquirer newInquirer) {
         int maxInquirerID = 0;
         try {
             Statement myStmt = dbConnect.createStatement();
@@ -658,7 +658,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
-    public void addToInquiryLog(int inquirerID, String date, String info) {
+    private void addToInquiryLog(int inquirerID, String date, String info) {
         int maxInquiryLogID = 0;
         try {
             Statement myStmt = dbConnect.createStatement();
@@ -702,7 +702,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
-    public int inquirerAlreadyExists(Inquirer person) {
+    private int inquirerAlreadyExists(Inquirer person) {
         
         int id = 0;
         try {
@@ -749,7 +749,7 @@ public class Mains implements ReliefWorker {
         } 
     }
 
-    public int orderingSupplies(Location location) {
+    private int orderingSupplies(Location location) {
         HashMap<String, Integer> supplyDict = new HashMap<>();
         supplyDict.put("Medkit", 70);
         supplyDict.put("Water", 2);

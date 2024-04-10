@@ -3,6 +3,6 @@
 package edu.ucalgary.oop;
 
 public interface LocationBasedReliefWorker extends ReliefWorker {
-    public int orderingSupplies();
+    public void orderSupplies(Location location);
     public void enterDisasterVictimInfo(Location location);
 }

@@ -15,14 +15,16 @@ import java.util.ArrayList;
 
 public class DisasterVictimTest {
     private DisasterVictim victim1;
-    private HashSet<Supply> personalBelongings; 
-    private HashSet<FamilyRelation> familyConnections;
-    private Vector<MedicalRecord> medicalRecords;
+    private HashSet<Supply> personalBelongings = new HashSet<>(); 
+    private HashSet<FamilyRelation> familyConnections = new HashSet<>();
+    private Vector<MedicalRecord> medicalRecords = new Vector<>();
     private String firstName = "Freda";
-    private String ENTRY_DATE = "2024-01-18";
-    private String validDate = "2024-01-15";
-    private String invalidDate = "15/13/2024";
+    private String lastName = "Mcdonalds";
+    private String ENTRY_DATE = "2002-01-18";
+    private String validDate = "2019-01-15";
+    private String invalidDate = "15/13/2124";
     private String gender = "man";
+
     private String dateOfBirth = "2001-08-13";
     private String comments = "Needs medical attention and speaks 2 languages";
     private int age;
@@ -36,8 +38,7 @@ public class DisasterVictimTest {
     public void setUp() {
         victim1 = new DisasterVictim(firstName, ENTRY_DATE);
         DisasterVictim victim2 = new DisasterVictim("Bob", "2023-02-02");
-        familyConnections = new HashSet<>();
-        familyConnections.add(new FamilyRelation(victim1, "brother", victim2));
+        familyConnections.add(new FamilyRelation(victim1, "child", victim2));
         medicalRecords.add(new MedicalRecord(new Location("Henry Park", "1234 Street NW"), "Got surgery for eye.", "2024-01-01"));
         personalBelongings.add(new Supply("Grapes", 3));
         age = 12;
@@ -50,10 +51,45 @@ public class DisasterVictimTest {
         assertEquals("The constructor was not able to set a valid date for Entry_Date.", validDate, newVictim.getEntryDate());
     }
 
+    /** Testing constructor with last name with a valid date to see if it correctly makes an object */
+    @Test
+    public void testDisasterVictimConstructorLastNameWithValidDate() {
+        DisasterVictim newVictim = new DisasterVictim(firstName, lastName, validDate);
+        assertEquals("The constructor was not able to set a valid date for Entry_Date.", validDate, newVictim.getEntryDate());
+    }
+
+    /** Testing constructor with last name and dateOfBirth with a valid date to see if it correctly makes an object */
+    @Test
+    public void testDisasterVictimConstructorLastNameAndDateOfBirthWithValidDate() {
+        DisasterVictim newVictim = new DisasterVictim(firstName, lastName, dateOfBirth, validDate);
+        assertEquals("The constructor was not able to set a valid date for Entry_Date.", validDate, newVictim.getEntryDate());
+    }
+
     /** Testing constructor with an invalid date to see if it correctly throws an Illegal Argument Exception  */
     @Test (expected = IllegalArgumentException.class)
     public void testDisasterVictimConstructorWithInvalidDate() {
         DisasterVictim newVictim = new DisasterVictim(firstName, invalidDate);
+        // Expecting to throw Illegal Argument Exception when running this test.
+    }
+
+    /** Testing constructor with last name with an invalid date to see if it correctly throws an Illegal Argument Exception */
+    @Test (expected = IllegalArgumentException.class)
+    public void testDisasterVictimConstructorLastNameWithInvalidDate() {
+        DisasterVictim newVictim = new DisasterVictim(firstName, lastName, invalidDate);
+        // Expecting to throw Illegal Argument Exception when running this test.
+    }
+
+    /** Testing constructor with last name and date of birth with an invalid date to see if it correctly throws an Illegal Argument Exception */
+    @Test (expected = IllegalArgumentException.class)
+    public void testDisasterVictimConstructorLastNameAndDateOfBirthWithInvalidDate() {
+        DisasterVictim newVictim = new DisasterVictim(firstName, lastName, dateOfBirth, invalidDate);
+        // Expecting to throw Illegal Argument Exception when running this test.
+    }
+
+    /** Testing constructor with last name and invalid date of birth with an valid date to see if it correctly throws an Illegal Argument Exception */
+    @Test (expected = IllegalArgumentException.class)
+    public void testDisasterVictimConstructorLastNameAndDateOfBirthWithInvalidDate() {
+        DisasterVictim newVictim = new DisasterVictim(firstName, lastName, invalidDate, dataOfBirth);
         // Expecting to throw Illegal Argument Exception when running this test.
     }
 
@@ -120,34 +156,26 @@ public class DisasterVictimTest {
         // Expecting to throw Illegal Argument Exception when running this test.
     }
 
-    /** Testing whether both age and dataOfBirth have values by first setting age then birthdate 
-     * (date of birth is supposed to have a value, age is NULL) */
-    @Test
+    /** Testing whether setting first age then date of birth will properly throw an Illegal Argument Exception like
+     * it is supposed to.
+     */
+    @Test (expected = IllegalArgumentException.class)
     public void testFirstAgeThenBirthDate() {
         boolean check = false;
         victim1.setAge(15);
         victim1.setDateOfBirth("2003-02-01");
-
-        // Age should be NULL 
-        if (age)
-            check = true;
-
-        assertFalse("Both age and dateOfBirth should not be able to be set.", check);
+        // Expecting to throw Illegal Argument Exception when running this test.
     }
 
-    /** Testing whether both age and dataOfBirth have values by first setting birthdate then age
-     * (age is supposed to have a value, date of birth is NULL) */
-    @Test
+    /** Testing whether setting first date of birth then age will properly throw an Illegal Argument Exception
+     * like it is supposed to.
+     */
+    @Test (expected = IllegalArgumentException.class)
     public void testFirstBirthDateThenAge() {
         boolean check = false;
         victim1.setDateOfBirth("2003-02-01");
         victim1.setAge(15);
-        
-        // BirthDate should be NULL 
-        if (dataOfBirth)
-            check = true;
-
-        assertFalse("Both age and dateOfBirth should not be able to be set.", check);
+        // Expecting to throw Illegal Argument Exception when running this test.
     }
 
     /** Testing whether the method getAssignedSocialID accurately return the right SocialID */
@@ -178,16 +206,33 @@ public class DisasterVictimTest {
         assertEquals("The method getPersonalBelongings did not return the right personal belongings.", personalBelongings, victim1.getPersonalBelongings());
     }
 
-    /** Testing whether the method setFamilyConnections accurately updates familyConnections */
+    /** Testing whether the method setFamilyConnections accurately updates Bob's familyConnections */
     @Test
-    public void testSetFamilyConnections() {
+    public void testSetFamilyConnectionsWithChildRelationshipBob() {
         DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
         DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
         
-        FamilyRelation relation1 = new FamilyRelation(newVictim1, "Father", newVictim2);
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
         
         HashSet<FamilyRelation> newFamilyConnections = new HashSet<>();
-        newFamilyConnections.add(relation1);
+        newFamilyConnections.addFamilyConnection(relation1);
+        victim1.setFamilyConnections(newFamilyConnections);
+
+        assertEquals("The method setFamilyConnections did not update the family connections.", newFamilyConnections, victim1.getFamilyConnections());
+    }
+
+    /** Testing whether the method setFamilyConnections accurately updates Shake's familyConnections */
+    @Test
+    public void testSetFamilyConnectionsWithChildRelationshipShake() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
+        newVictim1.addFamilyConnection(relation1);
+        
+        
+        HashSet<FamilyRelation> newFamilyConnections = new HashSet<>();
+        newFamilyConnections.addFamilyConnection(relation1);
         victim1.setFamilyConnections(newFamilyConnections);
 
         assertEquals("The method setFamilyConnections did not update the family connections.", newFamilyConnections, victim1.getFamilyConnections());

@@ -142,6 +142,5 @@ public class ReliefService {
         System.out.println("PROGRAM HAS FINISHED");
         System.out.println("--------------------------------------------------------------------------------");
         
-         
     }    
 }
