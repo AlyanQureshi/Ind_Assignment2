@@ -186,7 +186,7 @@ public class DisasterVictim {
         boolean suppliesAlreadyUpdated = false;
         // Find out whether there is enough supply at the current location and make locationCheck = true
         for (Supply temp : currentLocation.getSupplies()) {
-            if ((temp.getType() == supply.getType()) && ((temp.getQuantity() - supply.getQuantity()) >= 0)) {
+            if ((temp.getType().equals(supply.getType())) && ((temp.getQuantity() - supply.getQuantity()) >= 0)) {
                 // Remove supply from current location
                 currentLocation.removeSupply(supply);
                 locationCheck = true;
@@ -198,7 +198,7 @@ public class DisasterVictim {
         if (locationCheck) {
             // Find out whether we already have this item and add the supplies quantity to its previous quantity
             for (Supply temp : this.personalBelongings) {
-                if (temp.getType() == supply.getType()) {
+                if (temp.getType().equals(supply.getType())) {
                     int newTotal = temp.getQuantity() + supply.getQuantity();
                     temp.setQuantity(newTotal);
                     suppliesAlreadyUpdated = true;
@@ -224,7 +224,7 @@ public class DisasterVictim {
         // Find out whether there is enough supplies for the disaster victim to even give out
         // If there are enough, change the quantity to its reduced quantity
         for (Supply temp : this.personalBelongings) {
-            if ((temp.getType() == unwantedSupply.getType()) && ((temp.getQuantity() - unwantedSupply.getQuantity()) >= 0)) {
+            if ((temp.getType().equals(unwantedSupply.getType())) && ((temp.getQuantity() - unwantedSupply.getQuantity()) >= 0)) {
                 int newQuantity = temp.getQuantity() - unwantedSupply.getQuantity();
                 // Remove that supply, if quantity is 0
                 if (newQuantity == 0) {
@@ -271,22 +271,22 @@ public class DisasterVictim {
 
     private void removeFamilyObject(FamilyRelation object) {
         for (FamilyRelation temp : this.familyConnections) {
-            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
-                temp.getRelationshipTo() == object.getRelationshipTo()) {
+            if ((temp.getPersonOne().equals(object.getPersonOne())) && (temp.getPersonTwo().equals(object.getPersonTwo())) && 
+                (temp.getRelationshipTo().equals(object.getRelationshipTo()))) {
                     this.familyConnections.remove(temp);
             }
         }
     }
 
     private boolean containsFamilyObject(FamilyRelation object) {
-        boolean check = false;
         for (FamilyRelation temp : this.familyConnections) {
-            if (temp.getPersonOne() == object.getPersonOne() && temp.getPersonTwo() == object.getPersonTwo() && 
-                temp.getRelationshipTo() == object.getRelationshipTo()) {
-                    check = true;
+            if (temp.getPersonOne().equals(object.getPersonOne()) &&
+                temp.getPersonTwo().equals(object.getPersonTwo()) &&
+                temp.getRelationshipTo().equals(object.getRelationshipTo())) {
+                return true;
             }
         }
-        return check;
+        return false;
     }
 
     public void addFamilyConnection(FamilyRelation relation) { 
@@ -349,37 +349,37 @@ public class DisasterVictim {
         String relationshipOne = relation1.getRelationshipTo();
         String relationshipTwo = relation2.getRelationshipTo();
 
-        if ((relationshipOne == "sibling") && (relationshipTwo == "sibling")) {
+        if ("sibling".equals(relationshipOne) && "sibling".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "sibling";
             newPerson2 = relation2.getPersonTwo();
         } // Second if
-        else if ((relationshipOne == "parent") && (relationshipTwo == "spouse")) {
+        else if ("parent".equals(relationshipOne) && "spouse".equals(relationshipTwo)) {
             newPerson1 = relation2.getPersonTwo();
             finalRelationship = "parent";
             newPerson2 = relation1.getPersonTwo();
         } // third if
-        else if ((relationshipOne == "spouse") && (relationshipTwo == "parent")) {
+        else if ("spouse".equals(relationshipOne) && "parent".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "parent";
             newPerson2 = relation2.getPersonTwo();
         } // fourth if
-        else if ((relationshipOne == "child") && (relationshipTwo == "sibling")) {
+        else if ("child".equals(relationshipOne) && "sibling".equals(relationshipTwo)) {
             newPerson1 = relation2.getPersonTwo();
             finalRelationship = "child";
             newPerson2 = relation1.getPersonTwo();
         } // fifth if
-        else if ((relationshipOne == "sibling") && (relationshipTwo == "child")) {
+        else if ("sibling".equals(relationshipOne) && "child".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "child";
             newPerson2 = relation2.getPersonTwo();
         } // sixth if
-        else if ((relationshipOne == "child") && (relationshipTwo == "child")) {
+        else if ("child".equals(relationshipOne) && "child".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "spouse";
             newPerson2 = relation2.getPersonTwo();
         } // seventh if
-        else if ((relationshipOne == "parent") && (relationshipTwo == "parent")) {
+        else if ("parent".equals(relationshipOne) && "parent".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "sibling";
             newPerson2 = relation2.getPersonTwo();
@@ -394,10 +394,10 @@ public class DisasterVictim {
         DisasterVictim tempPerson2 = connection.getPersonOne();
         String oppositeRelationship;
 
-        if (connection.getRelationshipTo() == "parent") {
+        if (connection.getRelationshipTo().equals("parent")) {
             oppositeRelationship = "child";
         }
-        else if (connection.getRelationshipTo() == "child") {
+        else if (connection.getRelationshipTo().equals("child")) {
             oppositeRelationship = "parent";
         }
         else {
@@ -456,19 +456,21 @@ public class DisasterVictim {
         if (genderOptions == null) {
             try {
                 // Read all lines from the file into a List<String>
-                List<String> lines = 
-                Files.readAllLines(Paths.get("GenderOptions.txt"));
-                
-                // Convert the list to an array
-                options = lines.toArray(new String[0]);
-                
+                List<String> lines =
+                        Files.readAllLines(Paths.get("GenderOptions.txt"));
+
+                // Trim extra spaces from each line and add it to the array
+                options = new String[lines.size()];
+                for (int i = 0; i < lines.size(); i++) {
+                    options[i] = lines.get(i).trim();
+                }
+
             } catch (IOException e) {
                 System.err.println("An error occurred while reading the file: " + e.getMessage());
                 // Optionally, you can log the stack trace for debugging purposes
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             options = genderOptions;
         }
         return options;

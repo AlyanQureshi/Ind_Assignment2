@@ -92,7 +92,7 @@ public class ReliefService {
         HashSet<Location> locationList = new HashSet<>();
         Location telusSpark = new Location("Telus Spark", "32 Spark Street");
         Location childHospital = new Location("Children's Hospital", "102 Child West");
-        Location carnival = new Location("Helper Carnival", "20 Carnival Street");
+        Location carnival = new Location("Carnival Hospital", "20 Carnival Street");
         DisasterVictim alyan = new DisasterVictim("alyan", "2022-01-03");
         DisasterVictim balyan = new DisasterVictim("balyan", "2019-01-03");
         DisasterVictim dalyan = new DisasterVictim("ALyAn", "2021-01-03");
@@ -110,27 +110,36 @@ public class ReliefService {
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println("");
         System.out.println("Welcome to Los Pollos Hermanos!");
-        System.out.println("");
         
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Are you a Location-based Relief Worker? Or a Central Relief Worker?");
-        System.out.println("Enter '0' login as a Central Relief Worker. ");  
-        System.out.print("Enter '1' to login as a Location-based Relief Worker: ");
         
-        String input = scanner.nextLine();
-
-        Mains main = new Mains();
-
-        if (input.equals("0")) {
-            main.centralWorkerMain(locationList, scanner);
+        int i = 0;
+        while (true) {
+            if (i != 0) {
+                System.out.println("");
+                System.out.println("You have been logged out!");
+            }
+            System.out.println("");
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Please login: ");
+            System.out.println("1: Central Relief Worker.");  
+            System.out.println("2: Location-based Relief Worker");
+            System.out.println("");
+            System.out.print("Enter one of the options above (Enter any character to exit this application): ");
             
-        } else {
-            main.locationWorkerMain(locationList, scanner);
-        }
+            String input = scanner.nextLine();
 
+            Mains main = new Mains();
+            if (input.equals("1")) {
+                main.centralWorkerMain(locationList, scanner);
+            } else if (input.equals("2")) {
+                main.locationWorkerMain(locationList, scanner);
+            } else {
+                break;
+            }
+            i++;
+        }
         System.out.println("");
         System.out.println("PROGRAM HAS FINISHED");
-        System.out.println("");
         System.out.println("--------------------------------------------------------------------------------");
         
          

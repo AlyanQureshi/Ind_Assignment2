@@ -58,7 +58,8 @@ public class Location {
     public void addOccupant(DisasterVictim occupant) {
         boolean check = false;
         for (DisasterVictim object : occupants) {
-            if (object.getAssignedSocialID() == occupant.getAssignedSocialID()) {
+            if (object.getFirstName().equals(occupant.getFirstName()) && 
+                object.getEntryDate().equals(occupant.getEntryDate())) {
                 check = true;
                 break;
             }
@@ -76,8 +77,8 @@ public class Location {
     public void removeOccupant(DisasterVictim occupant) {
         boolean check = false;
         for (DisasterVictim object : occupants) {
-            if (object.getAssignedSocialID() == occupant.getAssignedSocialID()) {
-                occupants.remove(object);
+            if (object.getFirstName().equals(occupant.getFirstName()) && 
+                object.getEntryDate().equals(occupant.getEntryDate())) {
                 check = true;
                 break;
             }
