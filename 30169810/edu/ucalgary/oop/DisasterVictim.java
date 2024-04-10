@@ -1,4 +1,9 @@
-// DisasterVictim Class
+/**
+ * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
+ * muhammad.qureshi4@ucalgary.ca</a>
+ * @version 4.2
+ * @since 1.0
+*/
 
 package edu.ucalgary.oop;
 
@@ -42,6 +47,7 @@ public class DisasterVictim {
         VJML
     }
 
+    /** Constructor for Disaster Victim */
     public DisasterVictim(String firstName, String ENTRY_DATE) {
         this.firstName = firstName;
         if (!isValidDateFormat(ENTRY_DATE)) {
@@ -52,6 +58,7 @@ public class DisasterVictim {
         
     }
 
+    /** Second Constructor for Disaster Victim */
     public DisasterVictim(String firstName, String lastName, String ENTRY_DATE) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -63,6 +70,7 @@ public class DisasterVictim {
         
     }
 
+    /** Third Constructor for Disaster Victim */
     public DisasterVictim(String firstName, String lastName, String dateOfBirth, String ENTRY_DATE) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -78,18 +86,20 @@ public class DisasterVictim {
         
     }
 
+    /** Social ID generator */
     private static int generateSocialID() {
         counter++;
         return counter;
     }
 
+    /** Valid date format */
     private static boolean isValidDateFormat(String date) {
         String dateFormatPattern = "^\\d{4}-\\d{2}-\\d{2}$";
         return date.matches(dateFormatPattern);
     }
 
   
-    // Getters and setters
+    /** Getters and setters*/ 
 
     public String getFirstName() {
         return firstName;
@@ -111,6 +121,7 @@ public class DisasterVictim {
         return dateOfBirth;
     }
 
+    /** Date of birth handle already made age case */
     public void setDateOfBirth(String dateOfBirth) {
         if (!isValidDateFormat(dateOfBirth)) {
             throw new IllegalArgumentException("Invalid date format for date of birth. Expected format: YYYY-MM-DD");
@@ -125,10 +136,12 @@ public class DisasterVictim {
         }
     }
 
+    /** Getter for age*/ 
     public int getAge() {
         return age;
     }
 
+    /** Setter for age*/ 
     public void setAge(int age) {
         if (age <= 0 || age >= 120) {
             throw new IllegalArgumentException("Invalid age, please put a valid integer for age!");
@@ -143,22 +156,27 @@ public class DisasterVictim {
         }
     }
 
+    /** Getters for ID*/ 
     public int getAssignedSocialID() {
         return ASSIGNED_SOCIAL_ID;
     }
 
+    /** Getters for family*/ 
     public HashSet<FamilyRelation> getFamilyConnections() {
         return familyConnections;
     }
 
+    /** Getters afor medical record*/ 
     public Vector<MedicalRecord> getMedicalRecords() {
         return medicalRecords;
     }
 
+    /** Getters for personal belongings*/ 
     public HashSet<Supply> getPersonalBelongings() {
         return personalBelongings;
     }
     
+    /** setter for family connections*/ 
     public void setFamilyConnections(HashSet<FamilyRelation> connections) {
         this.familyConnections.clear();
         for (FamilyRelation newConnection : connections) {
@@ -166,6 +184,7 @@ public class DisasterVictim {
         }
     }
 
+    /** setter for medical record*/ 
     public void setMedicalRecords(Vector<MedicalRecord> records) {
         this.medicalRecords.clear();
         for (MedicalRecord newRecord : records) {
@@ -173,6 +192,7 @@ public class DisasterVictim {
         }
     }
 
+    /** setter for personal belongings*/ 
     public void setPersonalBelongings(HashSet<Supply> belongings, Location currLocation) {
         this.personalBelongings.clear();
         for (Supply newSupply : belongings) {
@@ -180,7 +200,7 @@ public class DisasterVictim {
         }
     }
 
-    // Add a Supply to personalBelonging
+    /** Add a Supply to personalBelonging*/ 
     public void addPersonalBelonging(Supply supply, Location currentLocation) {
         boolean locationCheck = false;
         boolean suppliesAlreadyUpdated = false;
@@ -218,7 +238,7 @@ public class DisasterVictim {
         }
     }
 
-    // Remove a Supply from personalBelongings, we assume it only appears once
+    /**Remove a Supply from personalBelongings, we assume it only appears once */
     public void removePersonalBelonging(Supply unwantedSupply, Location currentLocation) {
         boolean personalBelongingUpdated = false;
         // Find out whether there is enough supplies for the disaster victim to even give out
@@ -247,6 +267,7 @@ public class DisasterVictim {
         }
     }
 
+    /** Removing family connection */
     public void removeFamilyConnection(FamilyRelation exRelation) {
         // Making a oppositeRelationship FamilyRelation object where personOne and personTwo are switched for checking purposes.  
         FamilyRelation oppositeRelationship = reverseFamilyRelation(exRelation);
@@ -269,6 +290,7 @@ public class DisasterVictim {
         }
     }
 
+    /** Removing family object */
     private void removeFamilyObject(FamilyRelation object) {
         for (FamilyRelation temp : this.familyConnections) {
             if ((temp.getPersonOne().equals(object.getPersonOne())) && (temp.getPersonTwo().equals(object.getPersonTwo())) && 
@@ -278,7 +300,8 @@ public class DisasterVictim {
         }
     }
 
-    private boolean containsFamilyObject(FamilyRelation object) {
+    /** Contains family object */
+    public boolean containsFamilyObject(FamilyRelation object) {
         for (FamilyRelation temp : this.familyConnections) {
             if (temp.getPersonOne().equals(object.getPersonOne()) &&
                 temp.getPersonTwo().equals(object.getPersonTwo()) &&
@@ -289,13 +312,13 @@ public class DisasterVictim {
         return false;
     }
 
-    public void addFamilyConnection(FamilyRelation relation) { 
-        // Making a opposite relation object where personOne and 
-        // personTwo are switched as well as relationship is switched    
+    /** Adding family connection */
+    public void addFamilyConnection(FamilyRelation relation) {
+        // Making an opposite relation object where personOne and 
+        // personTwo are switched as well as the relationship is switched    
         FamilyRelation oppositeRelationship = reverseFamilyRelation(relation);
-
         DisasterVictim otherPerson = oppositeRelationship.getPersonOne();
-
+    
         // Check whether this relation already exists in familyConnections.
         if (this.containsFamilyObject(relation)) {
             return;
@@ -305,108 +328,104 @@ public class DisasterVictim {
             // If the other person had it, that means the first person did not have the relationship so add it to personOne's familyConnections
             this.familyConnections.add(relation);
         }
-        // If both people did not have the relatioships, then add it to both personOne's familyConnections and 
+        // If both people did not have the relationships, then add it to both personOne's familyConnections and 
         // personTwo's familyConnections
         else {
             this.familyConnections.add(relation);
             otherPerson.getFamilyConnections().add(oppositeRelationship);
         }
-
+    
         // Check whether family consistency is needed
         if ((this.connectionRepeats(familyConnections) == 2) && (otherPerson.connectionRepeats(otherPerson.getFamilyConnections()) == 1)) {
             FamilyRelation newFamilyConnection = ensureFamilyConsistency(familyConnections);
             FamilyRelation newOppositeConnection = reverseFamilyRelation(newFamilyConnection);
-
+    
             DisasterVictim newPerson1 = newFamilyConnection.getPersonOne();
             DisasterVictim newPerson2 = newFamilyConnection.getPersonTwo();
-
+    
             newPerson1.getFamilyConnections().add(newFamilyConnection);
             newPerson2.getFamilyConnections().add(newOppositeConnection);
         }
     }
-
+    
+    /** Ensing family consistency (Requirment #2) */
     private FamilyRelation ensureFamilyConsistency(HashSet<FamilyRelation> familyConnections) {
         FamilyRelation relation1 = null;
         FamilyRelation relation2 = null;
-        
+    
+        // Iterate over the familyConnections to find the relationships
         int i = 0;
         for (FamilyRelation object : familyConnections) {
             if (i == 0) {
                 relation1 = object;
-            }
-            else if (i == 1) {
+            } else if (i == 1) {
                 relation2 = object;
-            }
-            else {
+            } else {
                 break;
             }
             i++;
         }
-
+    
         DisasterVictim newPerson1 = null;
         DisasterVictim newPerson2 = null;
         String finalRelationship = null;
         String relationshipOne = relation1.getRelationshipTo();
         String relationshipTwo = relation2.getRelationshipTo();
-
+    
+        // Implement the logic for ensuring family consistency based on the relationships
+        // This logic is based on the provided tests, adjust if necessary
         if ("sibling".equals(relationshipOne) && "sibling".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "sibling";
             newPerson2 = relation2.getPersonTwo();
-        } // Second if
-        else if ("parent".equals(relationshipOne) && "spouse".equals(relationshipTwo)) {
+        } else if ("parent".equals(relationshipOne) && "spouse".equals(relationshipTwo)) {
             newPerson1 = relation2.getPersonTwo();
             finalRelationship = "parent";
             newPerson2 = relation1.getPersonTwo();
-        } // third if
-        else if ("spouse".equals(relationshipOne) && "parent".equals(relationshipTwo)) {
+        } else if ("spouse".equals(relationshipOne) && "parent".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "parent";
             newPerson2 = relation2.getPersonTwo();
-        } // fourth if
-        else if ("child".equals(relationshipOne) && "sibling".equals(relationshipTwo)) {
+        } else if ("child".equals(relationshipOne) && "sibling".equals(relationshipTwo)) {
             newPerson1 = relation2.getPersonTwo();
             finalRelationship = "child";
             newPerson2 = relation1.getPersonTwo();
-        } // fifth if
-        else if ("sibling".equals(relationshipOne) && "child".equals(relationshipTwo)) {
+        } else if ("sibling".equals(relationshipOne) && "child".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "child";
             newPerson2 = relation2.getPersonTwo();
-        } // sixth if
-        else if ("child".equals(relationshipOne) && "child".equals(relationshipTwo)) {
+        } else if ("child".equals(relationshipOne) && "child".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "spouse";
             newPerson2 = relation2.getPersonTwo();
-        } // seventh if
-        else if ("parent".equals(relationshipOne) && "parent".equals(relationshipTwo)) {
+        } else if ("parent".equals(relationshipOne) && "parent".equals(relationshipTwo)) {
             newPerson1 = relation1.getPersonTwo();
             finalRelationship = "sibling";
             newPerson2 = relation2.getPersonTwo();
         }
         FamilyRelation newConnection = new FamilyRelation(newPerson1, finalRelationship, newPerson2);
-
+    
         return newConnection;
     }
-
+    
+    /** Reversing family relation object */
     private FamilyRelation reverseFamilyRelation(FamilyRelation connection) {
         DisasterVictim tempPerson1 = connection.getPersonTwo();
         DisasterVictim tempPerson2 = connection.getPersonOne();
         String oppositeRelationship;
-
+    
         if (connection.getRelationshipTo().equals("parent")) {
             oppositeRelationship = "child";
-        }
-        else if (connection.getRelationshipTo().equals("child")) {
+        } else if (connection.getRelationshipTo().equals("child")) {
             oppositeRelationship = "parent";
-        }
-        else {
+        } else {
             oppositeRelationship = connection.getRelationshipTo();
         }
         FamilyRelation oppRelation = new FamilyRelation(tempPerson1, oppositeRelationship, tempPerson2);
         return oppRelation;
     }
-
+    
+    /** Count family relation objects*/
     private int connectionRepeats(HashSet<FamilyRelation> familyConnections) {
         int count = 0;
         for (FamilyRelation temp : familyConnections) {
@@ -415,27 +434,32 @@ public class DisasterVictim {
         return count;
     }
 
-    // Add a MedicalRecord to medicalRecords
+    /**Add a MedicalRecord to medicalRecords */
     public void addMedicalRecord(MedicalRecord record) {
         this.medicalRecords.add(record);
     }
 
+    /** getter for entry date */
     public String getEntryDate() {
         return ENTRY_DATE;
     }
 
+    /** getter for comment*/
     public String getComments() {
         return comments;
     }
 
+    /** setter for comments*/
     public void setComments(String comments) {
         this.comments = comments;
     }
 
+    /**setter for gender */
     public String getGender() {
         return gender;
     }
 
+    /**Reads from options and verifies user gender */
     public void setGender(String gender) {
     
         List<String> genderOptionsList = Arrays.asList(genderOptions);
@@ -447,10 +471,12 @@ public class DisasterVictim {
         this.gender = gender.toLowerCase(); // Store in a consistent format
     }
 
+    /**Getting gender options */
     public String getGenderOptions() {
         return Arrays.toString(genderOptions);
     }
 
+    /** Reads gender options from file*/
     public static String[] setGenderOptions() {
         String[] options = null;
         if (genderOptions == null) {
@@ -476,10 +502,12 @@ public class DisasterVictim {
         return options;
     }
 
+    /**get dietay restrictions */
     public String[] getDietaryRestrictions() {
         return mealRestrictions;
     }
 
+    /** set dietary restrictions*/
     public void setDietaryRestrictions(String[] mealRestrictions) {
         Set<String> validRestrictions = new HashSet<>();
         for (DietRestrictions restriction : DietRestrictions.values()) {
@@ -495,6 +523,7 @@ public class DisasterVictim {
         this.mealRestrictions = mealRestrictions;
     }
 
+    /** read diet options of user*/
     public void readDietOptions() {
         // Iterate over mealRestrictions and call commentOnMeal for each restriction
         for (String restriction : mealRestrictions) {
@@ -502,6 +531,7 @@ public class DisasterVictim {
         }
     }
 
+    /** Comement on user's diet options*/
     public static void commentOnMeal(DietRestrictions meal) {
         switch(meal) {
             case AVML:
@@ -534,10 +564,9 @@ public class DisasterVictim {
         }
     }
 
-    public static void main(String[] args) {
-        DisasterVictim alyan = new DisasterVictim("alyan", "2024-02-02");
-        DisasterVictim bob = new DisasterVictim("bob", "2024-02-05");
-        System.out.println(alyan.getGenderOptions());
-        System.out.println(bob.getGenderOptions());
+    /**checks date format */
+    public static boolean validateDateFormat(String date) {
+        String dateFormatPattern = "^\\d{4}-\\d{2}-\\d{2}$";
+        return date.matches(dateFormatPattern);
     }
 }

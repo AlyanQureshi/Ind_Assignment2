@@ -1,4 +1,9 @@
-// Relief Service Class
+/**
+ * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
+ * muhammad.qureshi4@ucalgary.ca</a>
+ * @version 1.5
+ * @since 1.0
+*/
 
 package edu.ucalgary.oop;
 import java.time.LocalDate;
@@ -13,38 +18,41 @@ public class ReliefService {
     private String infoProvided;
     private Location lastKnownLocation;
 
-    // Constructor
+    /**Constructor */
     public ReliefService(Inquirer inquirer, DisasterVictim missingPerson, String dateOfInquiry, String infoProvided, Location lastKnownLocation) {
         this.inquirer = inquirer;
         this.missingPerson = missingPerson;
-        setDateOfInquiry(dateOfInquiry);
+        this.setDateOfInquiry(dateOfInquiry);
         this.infoProvided = infoProvided;
         this.lastKnownLocation = lastKnownLocation;
     }
 
-    // Getter and setter for inquirer
+    /** Getter and setter for inquirer */
     public Inquirer getInquirer() {
         return inquirer;
     }
 
+    /** Setter for inquirer */
     public void setInquirer(Inquirer inquirer) {
         this.inquirer = inquirer;
     }
 
-    // Getter and setter for missingPerson
+    /** Getter and setter for missingPerson */
     public DisasterVictim getMissingPerson() {
         return missingPerson;
     }
 
+    /** setting for missing person */
     public void setMissingPerson(DisasterVictim missingPerson) {
         this.missingPerson = missingPerson;
     }
 
-    // Getter and setter for dateOfInquiry
+    /** Getter and setter for dateOfInquiry */
     public String getDateOfInquiry() {
         return dateOfInquiry;
     }
 
+    /**setting for date of inquiry */
     public void setDateOfInquiry(String dateOfInquiry) {
         // Check if the dateOfInquiry string matches the expected date format
         if (!isValidDateFormat(dateOfInquiry)) {
@@ -53,33 +61,37 @@ public class ReliefService {
         this.dateOfInquiry = dateOfInquiry;
     }
 
-    // Getter and setter for infoProvided
+    /** Getter and setter for infoProvided */
     public String getInfoProvided() {
         return infoProvided;
     }
 
+    /** Setting for info provided */
     public void setInfoProvided(String infoProvided) {
         this.infoProvided = infoProvided;
     }
 
-    // Getter and setter for lastKnownLocation
+    /** Getter and setter for lastKnownLocation */
     public Location getLastKnownLocation() {
         return lastKnownLocation;
     }
 
+    /** Setting for location */
     public void setLastKnownLocation(Location lastKnownLocation) {
         this.lastKnownLocation = lastKnownLocation;
     }
 
-    // Helper method to check if a string matches the YYYY-MM-DD date format
-    private boolean isValidDateFormat(String date) {
+    /** Helper method to check if a string matches the YYYY-MM-DD date format */
+    public boolean isValidDateFormat(String date) {
         try {
             LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
             return true;
         } catch (Exception e) {
-            return false;
+            throw new IllegalArgumentException("Wrong Date Format. Must be YYYY-MM-DD. ");
         }
     }
+    
+    /** Returns log details */
     public String getLogDetails() {
        return "Inquirer: " + inquirer.getFirstName() + 
            ", Missing Person: " + missingPerson.getFirstName() + 
@@ -88,19 +100,12 @@ public class ReliefService {
            ", Last Known Location: " + lastKnownLocation.getName();
     }
 
+    /** Main */
     public static void main(String[] args) {
         HashSet<Location> locationList = new HashSet<>();
         Location telusSpark = new Location("Telus Spark", "32 Spark Street");
         Location childHospital = new Location("Children's Hospital", "102 Child West");
         Location carnival = new Location("Carnival Hospital", "20 Carnival Street");
-        DisasterVictim alyan = new DisasterVictim("alyan", "2022-01-03");
-        DisasterVictim balyan = new DisasterVictim("balyan", "2019-01-03");
-        DisasterVictim dalyan = new DisasterVictim("ALyAn", "2021-01-03");
-        DisasterVictim libby = new DisasterVictim("foxxxxxx", "2024-01-03");
-        telusSpark.addOccupant(alyan);
-        carnival.addOccupant(balyan);
-        childHospital.addOccupant(dalyan);
-        telusSpark.addOccupant(libby);
 
         locationList.add(telusSpark);
         locationList.add(childHospital);

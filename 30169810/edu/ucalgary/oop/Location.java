@@ -1,4 +1,9 @@
-// Location Class
+/**
+ * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
+ * muhammad.qureshi4@ucalgary.ca</a>
+ * @version 1.3
+ * @since 1.0
+*/
 
 package edu.ucalgary.oop;
 

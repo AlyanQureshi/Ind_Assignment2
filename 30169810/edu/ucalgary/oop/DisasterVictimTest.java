@@ -12,10 +12,16 @@ import static org.junit.Assert.*;
 import java.util.Vector;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class DisasterVictimTest {
     private DisasterVictim victim1;
-    private HashSet<Supply> personalBelongings = new HashSet<>(); 
+    private HashSet<Supply> personalBelongings = new HashSet<>();
     private HashSet<FamilyRelation> familyConnections = new HashSet<>();
     private Vector<MedicalRecord> medicalRecords = new Vector<>();
     private String firstName = "Freda";
@@ -24,11 +30,13 @@ public class DisasterVictimTest {
     private String validDate = "2019-01-15";
     private String invalidDate = "15/13/2124";
     private String gender = "man";
-
+    private String[] genderOptions;
+    private final String filename = "genderOptionsTestFile.txt";
     private String dateOfBirth = "2001-08-13";
     private String comments = "Needs medical attention and speaks 2 languages";
     private int age;
-    String[] mealRestrictions = {"Halal Meal"};
+    String[] mealRestrictions = {"AVML"};
+
     enum DietTypes {
         AVML, DBML, GFML, LSML, MOML, PFML, VGML, VJML // These are all possible dietary restrictions
     }
@@ -37,7 +45,7 @@ public class DisasterVictimTest {
     @Before
     public void setUp() {
         victim1 = new DisasterVictim(firstName, ENTRY_DATE);
-        DisasterVictim victim2 = new DisasterVictim("Bob", "2023-02-02");
+        DisasterVictim victim2 = new DisasterVictim("Bob", "Henry", "2020-02-02", "2023-02-02");
         familyConnections.add(new FamilyRelation(victim1, "child", victim2));
         medicalRecords.add(new MedicalRecord(new Location("Henry Park", "1234 Street NW"), "Got surgery for eye.", "2024-01-01"));
         personalBelongings.add(new Supply("Grapes", 3));
@@ -88,8 +96,8 @@ public class DisasterVictimTest {
 
     /** Testing constructor with last name and invalid date of birth with an valid date to see if it correctly throws an Illegal Argument Exception */
     @Test (expected = IllegalArgumentException.class)
-    public void testDisasterVictimConstructorLastNameAndDateOfBirthWithInvalidDate() {
-        DisasterVictim newVictim = new DisasterVictim(firstName, lastName, invalidDate, dataOfBirth);
+    public void testDisasterVictimConstructorLastNameAndDateOfBirthWithInvalidBirthDate() {
+        DisasterVictim newVictim = new DisasterVictim(firstName, lastName, invalidDate, dateOfBirth);
         // Expecting to throw Illegal Argument Exception when running this test.
     }
 
@@ -194,13 +202,11 @@ public class DisasterVictimTest {
         assertEquals("The method getFamilyConnections did not return the right Family Connections.", familyConnections, victim1.getFamilyConnections());
     }
 
-    /** Testing whether the method getMedicalRecords returns the right medical records */
     @Test
     public void testGetMedicalRecords() {
         assertEquals("The method getMedicalRecords did not return the right medical records.", medicalRecords, victim1.getMedicalRecords());
     }
 
-    /** Testing whether the method getPersonalBelongings returns the right personal belongings */
     @Test
     public void testGetPersonalBelongings() {
         assertEquals("The method getPersonalBelongings did not return the right personal belongings.", personalBelongings, victim1.getPersonalBelongings());
@@ -215,7 +221,7 @@ public class DisasterVictimTest {
         FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
         
         HashSet<FamilyRelation> newFamilyConnections = new HashSet<>();
-        newFamilyConnections.addFamilyConnection(relation1);
+        newFamilyConnections.add(relation1);
         victim1.setFamilyConnections(newFamilyConnections);
 
         assertEquals("The method setFamilyConnections did not update the family connections.", newFamilyConnections, victim1.getFamilyConnections());
@@ -228,14 +234,184 @@ public class DisasterVictimTest {
         DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
         
         FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
-        newVictim1.addFamilyConnection(relation1);
+        HashSet<FamilyRelation> relations = new HashSet<>();
+        relations.add(relation1);
+        newVictim1.setFamilyConnections(relations);
         
-        
-        HashSet<FamilyRelation> newFamilyConnections = new HashSet<>();
-        newFamilyConnections.addFamilyConnection(relation1);
-        victim1.setFamilyConnections(newFamilyConnections);
 
-        assertEquals("The method setFamilyConnections did not update the family connections.", newFamilyConnections, victim1.getFamilyConnections());
+        assertEquals("The method setFamilyConnections did not update the family connections.", relations, newVictim2.getFamilyConnections());
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testOppositeFamilyConnectionWithParent() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "parent", newVictim2);
+        newVictim1.addFamilyConnection(relation1);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim2, "child", newVictim1);
+        assertEquals("The method addFamilyConnection did not properly add the opposite relationship to the other person.", oppRelation, newVictim2.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testOppositeFamilyConnectionWithSpouse() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "spouse", newVictim2);
+        newVictim1.addFamilyConnection(relation1);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim2, "child", newVictim1);
+        assertEquals("The method addFamilyConnection did not properly add the opposite relationship to the other person.", oppRelation, newVictim2.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testOppositeFamilyConnectionWithSibling() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "sibling", newVictim2);
+        newVictim1.addFamilyConnection(relation1);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim2, "sibling", newVictim1);
+        assertEquals("The method addFamilyConnection did not properly add the opposite relationship to the other person.", oppRelation, newVictim2.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testOppositeFamilyConnectionWithChild() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
+        newVictim1.addFamilyConnection(relation1);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim2, "parent", newVictim1);
+        assertEquals("The method addFamilyConnection did not properly add the opposite relationship to the other person.", oppRelation, newVictim2.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test (expected = IllegalArgumentException.class)
+    public void testAddingSameFamilyConnection() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation1);
+        // Expecting to throw Illegal Argument Exception when running this test.
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testEnsuringFamilyConsistencyThroughAddingConnectionSiblingToSibling() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        DisasterVictim newVictim3 = new DisasterVictim("Sarah", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "sibling", newVictim2);
+        FamilyRelation relation2 = new FamilyRelation(newVictim1, "sibling", newVictim3);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation2);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim3, "sibling", newVictim2);
+
+        assertEquals("The method addFamilyConnection did not ensure FamilyConsistency by adding the last relationship.", oppRelation, newVictim3.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testEnsuringFamilyConsistencyThroughAddingConnectionParentToSpouse() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        DisasterVictim newVictim3 = new DisasterVictim("Sarah", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "parent", newVictim2);
+        FamilyRelation relation2 = new FamilyRelation(newVictim1, "spouse", newVictim3);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation2);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim3, "parent", newVictim2);
+
+        assertEquals("The method addFamilyConnection did not ensure FamilyConsistency by adding the last relationship.", oppRelation, newVictim3.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testEnsuringFamilyConsistencyThroughAddingConnectionSpouseToParent() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        DisasterVictim newVictim3 = new DisasterVictim("Sarah", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "parent", newVictim2);
+        FamilyRelation relation2 = new FamilyRelation(newVictim1, "spouse", newVictim3);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation2);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim3, "child", newVictim2);
+
+        assertEquals("The method addFamilyConnection did not ensure FamilyConsistency by adding the last relationship.", oppRelation, newVictim3.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testEnsuringFamilyConsistencyThroughAddingConnectionChildToSibling() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        DisasterVictim newVictim3 = new DisasterVictim("Sarah", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
+        FamilyRelation relation2 = new FamilyRelation(newVictim1, "sibling", newVictim3);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation2);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim3, "child", newVictim2);
+
+        assertEquals("The method addFamilyConnection did not ensure FamilyConsistency by adding the last relationship.", oppRelation, newVictim3.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testEnsuringFamilyConsistencyThroughAddingConnectionSiblingToChild() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        DisasterVictim newVictim3 = new DisasterVictim("Sarah", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "sibling", newVictim2);
+        FamilyRelation relation2 = new FamilyRelation(newVictim1, "child", newVictim3);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation2);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim3, "parent", newVictim2);
+
+        assertEquals("The method addFamilyConnection did not ensure FamilyConsistency by adding the last relationship.", oppRelation, newVictim3.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testEnsuringFamilyConsistencyThroughAddingConnectionChildToChild() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        DisasterVictim newVictim3 = new DisasterVictim("Sarah", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "child", newVictim2);
+        FamilyRelation relation2 = new FamilyRelation(newVictim1, "child", newVictim3);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation2);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim3, "spouse", newVictim2);
+
+        assertEquals("The method addFamilyConnection did not ensure FamilyConsistency by adding the last relationship.", oppRelation, newVictim3.containsFamilyObject(oppRelation));
+    }
+
+    /**Testing family consistency */
+    @Test
+    public void testEnsuringFamilyConsistencyThroughAddingConnectionParentToParent() {
+        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
+        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
+        DisasterVictim newVictim3 = new DisasterVictim("Sarah", "2022-01-01");
+        
+        FamilyRelation relation1 = new FamilyRelation(newVictim1, "parent", newVictim2);
+        FamilyRelation relation2 = new FamilyRelation(newVictim1, "parent", newVictim3);
+        newVictim1.addFamilyConnection(relation1);
+        newVictim1.addFamilyConnection(relation2);
+        FamilyRelation oppRelation = new FamilyRelation(newVictim3, "sibling", newVictim2);
+
+        assertEquals("The method addFamilyConnection did not ensure FamilyConsistency by adding the last relationship.", oppRelation, newVictim3.containsFamilyObject(oppRelation));
     }
 
     /** Testing whether the setMedicalRecord accurately sets the medical records to the new medical record  */
@@ -259,31 +435,72 @@ public class DisasterVictimTest {
         HashSet<Supply> newSupplies = new HashSet<>();
         newSupplies.add(item1);
         newSupplies.add(item2);
+        Location tempLocation = new Location("Stark Hospital", "Stark street");
+        tempLocation.setSupplies(newSupplies);
 
-        victim1.setPersonalBelongings(newSupplies);
+        victim1.setPersonalBelongings(newSupplies, tempLocation);
     
         assertEquals("The method setPersonalBelongings did correctly update the personal belongings.", newSupplies, victim1.getPersonalBelongings());
     }
 
     /** Testing whether the method addPersonalBelonging correctly adds a new Supply object to personalBelongings */
     @Test
-    public void testAddPersonalBelonging() {
+    public void testAddPersonalBelongingWithEnoughSuppliesAtLocation() {
         Supply newItem = new Supply("Milk", 2);
-        victim1.addPersonalBelonging(newItem);
-        assertTrue("The method addPersonalBelonging did not add the new personal belonging.", newItem, personalBelongings.contains(newItem));
+        Location tempLocation = new Location("Gondola Reserves", "Gondal Street");
+        tempLocation.addSupply(new Supply("Milk", 10));
+        victim1.addPersonalBelonging(newItem, tempLocation);
+
+        boolean check = false;
+        for (Supply item : this.personalBelongings) {
+            if ((item.getType().equals(newItem.getType())) && (item.getQuantity() == newItem.getQuantity())) {
+                check = true;
+                break;
+            }
+        }
+        assertTrue("The method addPersonalBelonging did not add the new personal belonging.", check);
+    }
+
+    /**Testing supply consistency */
+    @Test (expected = IllegalArgumentException.class)
+    public void testAddPersonalBelongingWithNotEnoughSuppliesAtLocation() {
+        Supply newItem = new Supply("Milk", 2);
+        Location tempLocation = new Location("Gondola Reserves", "Gondal Street");
+        tempLocation.addSupply(new Supply("Milk", 1));
+        victim1.addPersonalBelonging(newItem, tempLocation);
+        // Expecting to throw Illegal Argument Exception when running this test.
     }
 
     /** Testing whether the method removePersonalBelonging correctly removes the Supply object from personalBelongings */
-    @Test
-    public void testRemovePersonalBelonging() {
+    @Test (expected = IllegalArgumentException.class)
+    public void testRemovePersonalBelongingWithNotEnoughPersonalBelonings() {
         Supply itemToAdd = new Supply("Milk", 2);
         Supply unwantedItem = new Supply("Coco Cola", 6);
+        Location tempLocation = new Location("Gondola Reserves", "Gondal Street");
 
-        victim1.addPersonalBelonging(itemToAdd);
-        victim1.addPersonalBelonging(unwantedItem);
+        victim1.addPersonalBelonging(itemToAdd, tempLocation);
+        victim1.removePersonalBelonging(unwantedItem, tempLocation);
+        // Expecting to throw Illegal Argument Exception when running this test.
+    }
+        
+    /**Testing supply consistency */
+    @Test 
+    public void testAddPersonalBelongingWithEnoughPersonalBelongings() {
+        Supply newItem = new Supply("Milk", 2);
+        Location tempLocation = new Location("Gondola Reserves", "Gondal Street");
+        
+        victim1.addPersonalBelonging(newItem, tempLocation);
+        victim1.removePersonalBelonging(newItem, tempLocation);
 
-        victim1.removePersonalBelonging(unwantedItem);
-        assertFalse("The method removePersonalBelonging did not remove the unwanted supply.", unwantedItem, personalBelongings.contains(unwantedItem));
+        boolean check = false;
+        for (Supply item : this.personalBelongings) {
+            if ((item.getType().equals(newItem.getType())) && (item.getQuantity() == newItem.getQuantity())) {
+                check = true;
+                break;
+            }
+        }
+        assertEquals("The method removePersonalBelonging did not properly remove the Supply from the personal belongings.", false, check);
+        // Expecting to throw Illegal Argument Exception when running this test.
     }
 
     /** Testing whether the method removeFamilyConnection correctly removes the unwanted relation from familyConnections */
@@ -296,19 +513,7 @@ public class DisasterVictimTest {
         victim1.addFamilyConnection(unwantedRelation);
         victim1.removeFamilyConnection(unwantedRelation);
 
-        assertFalse("The method removeFamilyConnection did not remove the unwanted relation.", unwantedRelation, familyConnections.contains(unwantedRelation));
-    }
-
-    /** Testing whether the method addFamilyConnection correctly adds a new relation to familyConnections */
-    @Test
-    public void testAddFamilyConnection() {
-        DisasterVictim newVictim1 = new DisasterVictim("Bob", "2020-01-01");
-        DisasterVictim newVictim2 = new DisasterVictim("Shake", "2022-01-01");
-        
-        FamilyRelation newRelation = new FamilyRelation(newVictim1, "Father", newVictim2);
-        victim1.addFamilyConnection(newRelation);
-
-        assertTrue("The method addFamilyConnection did not add a new family connection.", newRelation, familyConnections.contains(newRelation));
+        assertEquals("The method removeFamilyConnection did not remove the unwanted relation.", true, victim1.containsFamilyObject(unwantedRelation));
     }
 
     /** Testing whether the method addMedicalRecord correctly adds a new medical record */
@@ -318,8 +523,16 @@ public class DisasterVictimTest {
         MedicalRecord newRecord = new MedicalRecord(newLocation, "Pain in Throat", "2023-01-01");
 
         victim1.addMedicalRecord(newRecord);
+        boolean check = false;
+        for (MedicalRecord record : victim1.getMedicalRecords()) {
+            if (record.getLocation().equals(newLocation) && record.getTreatmentDetails().equals("Pain in Throat") && 
+                record.getDateOfTreatment().equals("2023-01-01")) {
+                check = true;
+                break;
+            }
+        }
 
-        assertTrue("The method addMedicalRecord did not add a new medical record.", newRecord, medicalRecords.contains(newRecord));
+        assertTrue("The method addMedicalRecord did not add a new medical record.", check);
     }
 
     /** Testing whether the method getEntryDate return the return the right entry date */
@@ -367,17 +580,40 @@ public class DisasterVictimTest {
     /**EDIT THIS LATER */
     @Test
     public void testGetGenderOptions() {
-        String[] options = victim1.getGenderOptions();
+        String[] expectedOptions = {"Male", "Female", "Other"}; // Known values
+        assertEquals("The method getGenderOptions did not accurately return the right genders.", expectedOptions, victim1.getGenderOptions());   
     }
 
     /** Testing whether the method populateGenderOptions correctly reads and fills out the string list of gender options */
     @Test  
     public void testSetGenderOptions() {
-        // Create a new text file and also hard code and see if they are similar
+        String[] expectedOptions = {"Male", "Female", "Other"}; // Known values
+
+        // Write known values to a file
+        String filename = "genderOptionsTestFile.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String option : expectedOptions) {
+                writer.write(option);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
-        String 
-        victim1.setGender(invalidGender);
         
+        // Call setGenderOptions to read values from the file
+        victim1.setGenderOptions();
+        
+
+        // Deleting text file 
+        try {
+            Files.deleteIfExists(Paths.get(filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Compare expected and actual values
+        assertArrayEquals("The method setGenderOptions did not accurately update the gender options array", expectedOptions, this.genderOptions);
     }
 
     /** Testing whether the method getDietaryRestrictions correctly returns the right dietary restrictions */
@@ -387,27 +623,20 @@ public class DisasterVictimTest {
             victim1.getDietaryRestrictions(), mealRestrictions);
     }
 
-    /** Testing wehter the method setDietaryRestrictions correctly updates the mealRestrictions */
+    /** Testing wheter the method setDietaryRestrictions correctly updates the mealRestrictions */
     @Test
-    public void testSetDietaryRestrictions() {
-        DietRestrictions newRestriction = {DietTypes.VGML};
-        victim1.setDietaryRestrictions(newRestriction.toString());
+    public void testSetDietaryRestrictionsWithValidOptions() {
+        String[] newRestrictions = {"AVML", "VGML"};
+        victim1.setDietaryRestrictions(newRestrictions);
         assertEquals("The method setDietaryRestrictions did not update the dietary restrictions correctly.", 
-            victim1.getDietaryRestrictions(), newRestriction.toString());
+            victim1.getDietaryRestrictions(), newRestrictions);
     }
 
-    /** Testing validateDateFormat with a correct date format */
-    @Test
-    public void testValidDateFormatWithCorrectFormatDisasterVictim() {
-        boolean expectedCheck = true;
-        boolean actualCheck = medicalRecord.validateDateFormat("2023-01-01");
-        assertEquals("Method validateDateFormat returned false for a date that has a correct format.", expectedCheck, actualCheck);
-    }
-
-    /** Testing validateDateFormat with an incorrect date format */
-    @Test(expected = IllegalArgumentException.class) 
-    public void testValidDateFormatWithIncorrectFormatDisasterVictim() {
-        medicalRecord.validateDateFormat("2090-01-01");
+    /**Testing diet options */
+    @Test (expected = IllegalArgumentException.class) 
+    public void testSetDietaryRestrictionsWithInvalidOptions() {
+        String[] newRestrictions = {"AVML", "VVML"};
+        victim1.setDietaryRestrictions(newRestrictions);
         // Expecting IllegalArgumentException due to an invalid date format
     }
 }

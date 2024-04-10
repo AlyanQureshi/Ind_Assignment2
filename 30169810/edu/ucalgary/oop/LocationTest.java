@@ -81,7 +81,11 @@ public class LocationTest {
     /** Testing whether the method getOccupants returns the right occupants */
     @Test
     public void testGetOccupants() {
-        assertEquals("The method getOccupants was not able to retrieve the hashset of occupants for a location.", occupants, location.getOccupants());
+        HashSet<DisasterVictim> expectedOccupants = new HashSet<>();
+        expectedOccupants.add(victim1);
+        expectedOccupants.add(victim2);
+
+        assertEquals("The method getOccupants was not able to retrieve the hashset of occupants for a location.", expectedOccupants, location.getOccupants());
     }
 
     /** Testing whether the method setOccupants correctly updates the occupants */
@@ -101,16 +105,21 @@ public class LocationTest {
     /** Testing whether the method getSupplies correctly returns the right supplies */
     @Test
     public void testGetSupplies() {
-        assertEquals("The method getSupplies did not retrieve the vector of supplies for this location.", supplies, location.getSupplies());
+        HashSet<Supply> expectedSupplies = new HashSet<>();
+        expectedSupplies.add(supply1);
+        expectedSupplies.add(supply2);
+
+        // Convert location.getSupplies() to a HashSet to match expectedSupplies
+        assertEquals("The method getSupplies did not retrieve the vector of supplies for this location.", expectedSupplies, new HashSet<>(location.getSupplies()));
     }
 
     /** Testing whether the method setSupplies correctly updates the right supplies */
-    @Test 
+    @Test
     public void testSetSupplies() {
         Supply newSupply1 = new Supply("Lays", 20);
         Supply newSupply2 = new Supply("Pepsi", 4);
 
-        Vector<Supply> newSupplies = new Vector<>();
+        HashSet<Supply> newSupplies = new HashSet<>();
         newSupplies.add(newSupply1);
         newSupplies.add(newSupply2);
 
@@ -123,14 +132,30 @@ public class LocationTest {
     public void testAddOccupant() {
         DisasterVictim victim3 = new DisasterVictim("Henry Cavil", "2021-09-07");
         location.addOccupant(victim3);
+        
         assertTrue("The method addOccupant did not correctly add the new victim to this location.", location.getOccupants().contains(victim3));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testAddOccupantButOccupantAlreadyExists() {
+        DisasterVictim victim3 = new DisasterVictim("Henry Cavil", "2021-09-07");
+        location.addOccupant(victim3);
+        location.addOccupant(victim3);
+        // Expecting to throw Illegal Argument Exception when running this test.
     }
 
     /** Testing whether the method removeOccupant correctly removes a DisasterVictim object */
     @Test
     public void testRemoveOccupant() {
         location.removeOccupant(victim2);
+        
         assertFalse("The method removeOccupant did not properly delete the victim.", location.getOccupants().contains(victim2));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testRemoveOccupantButNoOccupantExists() {
+        location.removeOccupant(new DisasterVictim("sara", "2020-02-02"));
+        // Expecting to throw Illegal Argument Exception when running this test.
     }
 
     /** Testing whether the method addSupply adds a new Supply object to the location */
@@ -143,8 +168,25 @@ public class LocationTest {
 
     /** Testing whether the method removeSupply correctly removes a supply object. */
     @Test
-    public void testRemoveSupply() {
-        location.removeSupply(supply2);
-        assertFalse("The method removeSupply was not able to properly delete this supply from the location.", location.getSupplies().contains(supply2));
+    public void testRemoveSupplyWithEnoughSupply() {
+        Supply newSupply = new Supply("Pop", 4);
+        location.addSupply(newSupply);
+        location.removeSupply(newSupply);
+        boolean check = false;
+        for (Supply item : location.getSupplies()) {
+            if ((item.getType().equals("Pop")) && (item.getQuantity() == 4)) {
+                check = true;
+            }
+        }
+        assertFalse("The method removeSupply was not able to properly delete this supply from the location.", check);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testRemoveSupplyWithNotEnoughSupply() {
+        Supply newSupply = new Supply("Pop", 4);
+        Supply unwantedItem = new Supply("Pop", 10);
+        location.addSupply(newSupply);
+        location.removeSupply(unwantedItem);
+        // Expecting to throw Illegal Argument Exception when running this test.
     }
 }

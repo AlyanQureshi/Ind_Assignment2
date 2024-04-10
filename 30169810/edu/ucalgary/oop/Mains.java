@@ -1,4 +1,9 @@
-// Mains Class
+/**
+ * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
+ * muhammad.qureshi4@ucalgary.ca</a>
+ * @version 8.1
+ * @since 1.0
+*/
 
 package edu.ucalgary.oop;
 import java.util.Scanner;
@@ -13,8 +18,10 @@ public class Mains implements ReliefWorker {
     private Connection dbConnect;
     private ResultSet results;
 
+    /**Constructor */
     public Mains() {}
 
+    /** Location main method*/
     public void locationWorkerMain(HashSet<Location> locationList, Scanner scanner) {
         System.out.println("");
         System.out.println("As a Relief Worker you have three locations to choose from: ");
@@ -45,10 +52,10 @@ public class Mains implements ReliefWorker {
             System.out.println("As a Location-Based Relief Worker for this location, You have can do 5 tasks: ");
             System.out.println("");
             System.out.println("1: Ordering Supplies for this location from Amazon.");
-            System.out.println("2: Look at current inventory");
+            System.out.println("2: Look at the current inventory of this location. ");
             System.out.println("3: Helping People Find Disaster Victims at this location.");
             System.out.println("4: Adding Disaster Victims to this location.");
-            System.out.println("5: Look at current Occupants.");
+            System.out.println("5: Look at the current Occupants of this location.");
             System.out.println("");
 
             System.out.print("Enter a number from the above options based on what you want to do (Enter '0' to stop): ");
@@ -73,7 +80,8 @@ public class Mains implements ReliefWorker {
         }
     }
 
-    private void currentOccupants(Location location) {
+    /** current occupants method */
+    public void currentOccupants(Location location) {
         Scanner scanner = new Scanner(System.in);
         boolean check = false;
         System.out.println("");
@@ -95,6 +103,7 @@ public class Mains implements ReliefWorker {
         String use = scanner.nextLine();
     }
 
+    /** Entering disaster victim info */
     public void enterDisasterVictimInfo(Location location) {
         System.out.println("");
         Scanner scanner = new Scanner(System.in);
@@ -203,6 +212,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
+    /** Entering a new disaster victim object*/
     private DisasterVictim newDisasterVictim(Scanner scanner) {
         DisasterVictim newPerson = null;
         System.out.print("Please enter the person's first name: ");
@@ -285,10 +295,14 @@ public class Mains implements ReliefWorker {
         }
         String[] restrictions = restrictionsList.toArray(new String[0]);
         newPerson.setDietaryRestrictions(restrictions);
+        System.out.println("");
+        System.out.println("You picked these meals:");
+        newPerson.readDietOptions();
 
         return newPerson;
     }
 
+    /** Seeing the current inventory*/
     public void currentInventory(Location location) {
         Scanner scanner = new Scanner(System.in);
         boolean check = false;
@@ -308,6 +322,7 @@ public class Mains implements ReliefWorker {
         String use = scanner.nextLine();
     }
 
+    /** Finding victims in a location*/
     public boolean findLocationVictim(Location location, Scanner scanner) {
         Mains database = new Mains();
         database.createConnection();
@@ -346,6 +361,7 @@ public class Mains implements ReliefWorker {
         return check;
     }
 
+    /** ordering supplies method */
     public void orderSupplies(Location location) {
         System.out.println("By ordering supplies, you are adding them to this location's inventory!");
         System.out.println("");
@@ -363,11 +379,12 @@ public class Mains implements ReliefWorker {
         System.out.println("You ordered $" + totalPrice + " worth of supplies to " + location.getName());
     }
 
+    /** Central worker method*/
     public void centralWorkerMain(HashSet<Location> locationList, Scanner scanner) {
         System.out.println("");
         System.out.println("As a Central Relief Worker you have two responsibilities:");
         System.out.println("");
-        System.out.println("1) Log Inquirer Queries.");
+        System.out.println("1) Log New Inquirer Queries and Store into Database.");
         System.out.println("2) Search for Disaster Victims Using Inquiry Log.");
         System.out.println("");
 
@@ -380,6 +397,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
+    /** Resolving and searching for disaterVictims*/
     public void resolveQueries(Scanner scanner, HashSet<Location> allLocations) {
         Mains database = new Mains();
         database.createConnection();
@@ -388,7 +406,7 @@ public class Mains implements ReliefWorker {
         System.out.println("");
         System.out.println("Here is the current query log with the current inquiries: ");
         System.out.println("-----------------------------");
-        HashMap<Integer, String> queryLog = returnAllQueries();
+        HashMap<Integer, String> queryLog = database.returnAllQueries();
         for (int key : queryLog.keySet()) {
             System.out.println(key + ": " + queryLog.get(key));
         }
@@ -406,7 +424,7 @@ public class Mains implements ReliefWorker {
                 break;
             }
 
-            ArrayList<String> searchResults = findDisasterVictims(allLocations, partialName);
+            ArrayList<String> searchResults = database.findDisasterVictims(allLocations, partialName);
             if (searchResults == null) {
                 System.out.println("Your search did not return any names. Please try again.");
                 continue;
@@ -429,7 +447,7 @@ public class Mains implements ReliefWorker {
                 }
                 int index = element - 1;
                 System.out.println("");
-                victimMoreInfo(searchResults.get(index), allLocations);
+                database.victimMoreInfo(searchResults.get(index), allLocations);
                 System.out.println("");
 
                 System.out.println("Was this the person you are looking for?");
@@ -438,7 +456,7 @@ public class Mains implements ReliefWorker {
 
                 if (found.equals("yes")) {
                     System.out.println("");
-                    String number = getInquirerPhoneNumber(inquiryID);
+                    String number = database.getInquirerPhoneNumber(inquiryID);
                     System.out.println("Please call this inquirer's number to tell them that we have resolved their query: " + number);
                     done = false;
                     break;
@@ -448,6 +466,7 @@ public class Mains implements ReliefWorker {
         database.close();
     }
 
+    /** Getting an inquirer's phone number*/
     private String getInquirerPhoneNumber(int inquiryLogID) {
         String phoneNumber = null;
         try {
@@ -471,6 +490,7 @@ public class Mains implements ReliefWorker {
         return phoneNumber;
     }
 
+    /** Getting more info about a certain victim*/
     private void victimMoreInfo(String fName, HashSet<Location> allLocations) {
         String lowerName = fName.toLowerCase();
         for (Location place : allLocations) {
@@ -492,6 +512,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
+    /** This returns all inquiry log queries */
     private HashMap<Integer, String> returnAllQueries() {
         HashMap<Integer, String> queries = new HashMap<>();
         try {
@@ -512,16 +533,19 @@ public class Mains implements ReliefWorker {
         return queries;
     }
     
+    /** Method to check whether a string has a valid number format*/
     private static boolean isValidNumberFormat(String number) {
         String numberFormatPattern = "^\\d{3}-\\d{3}-\\d{4}$";
         return number.matches(numberFormatPattern);
     }
 
+    /** Checking whether a string has a valid date format*/
     private static boolean isValidDateFormat(String date) {
         String dateFormatPattern = "^\\d{4}-\\d{2}-\\d{2}$";
         return date.matches(dateFormatPattern);
     }
 
+    /**Logging inquiries that the relief worker wants to put in */
     public void logInquirerQuery(Scanner scanner) {
         Mains database = new Mains();
         database.createConnection();
@@ -603,6 +627,7 @@ public class Mains implements ReliefWorker {
         database.close();
     }
     
+    /** Adding new inquirer for when there is a new inquirer*/
     private void addNewInquirer(Inquirer newInquirer) {
         int maxInquirerID = 0;
         try {
@@ -650,6 +675,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
+    /** Database connection */
     public void createConnection(){
         try{
             dbConnect = DriverManager.getConnection("jdbc:postgresql://localhost/ensf380project", "oop", "ucalgary");
@@ -658,6 +684,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
+    /** Adding to inquiry log using inquirerID*/
     private void addToInquiryLog(int inquirerID, String date, String info) {
         int maxInquiryLogID = 0;
         try {
@@ -693,6 +720,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
+    /** Closing database and releasing resources*/
     public void close() {
         try {
             results.close();
@@ -702,6 +730,7 @@ public class Mains implements ReliefWorker {
         }
     }
 
+    /** Checking whether the inquirer already exists*/
     private int inquirerAlreadyExists(Inquirer person) {
         
         int id = 0;
@@ -726,6 +755,7 @@ public class Mains implements ReliefWorker {
         return id;
     }
 
+    /**Finding disaster victims through out every single location */
     public ArrayList<String> findDisasterVictims(HashSet<Location> locations, String name) {
         String partialName = name.toLowerCase();
         ArrayList<String> names = new ArrayList<>();
@@ -749,6 +779,7 @@ public class Mains implements ReliefWorker {
         } 
     }
 
+    /** Ordering supplies from amazon and adding to the locations's personal inventory*/
     private int orderingSupplies(Location location) {
         HashMap<String, Integer> supplyDict = new HashMap<>();
         supplyDict.put("Medkit", 70);

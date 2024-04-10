@@ -12,14 +12,18 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class FamilyRelationTest {
-    
-    /** This setup will run before every other test */ 
+
+    private FamilyRelation familyRelationObject;
+    private DisasterVictim personOne;
+    private DisasterVictim personTwo;
+    private String relationshipTo = "sibling";
+
+    /** This setup will run before every other test */
     @Before
     public void setUp() {
-        DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19");
-        DisasterVictim personTwo = new DisasterVictim("Jane Dalan", "2024-02-20");
-        String relationshipTo = "sibling";
-        FamilyRelation familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
+        personOne = new DisasterVictim("John Dalan", "2024-01-19");
+        personTwo = new DisasterVictim("Jane Dalan", "2024-02-20");
+        familyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
     }
 
     /** Testing constructor for Family Relation */
@@ -34,7 +38,7 @@ public class FamilyRelationTest {
         assertEquals("Method getPersonOne did not return personOne", personOne, familyRelationObject.getPersonOne());
     }
 
-    /**  Testing setPersonOne */
+    /** Testing setPersonOne */
     @Test
     public void testSetPersonOne() {
         DisasterVictim newPersonOne = new DisasterVictim("John Wick", "2024-03-21");
@@ -48,7 +52,7 @@ public class FamilyRelationTest {
         assertEquals("Method getRelationshipTo did not return the correct relationship.", relationshipTo, familyRelationObject.getRelationshipTo());
     }
 
-    /**  Testing setRelationshipTo */
+    /** Testing setRelationshipTo */
     @Test
     public void testSetRelationshipTo() {
         String newRelationship = "Father";
@@ -63,7 +67,7 @@ public class FamilyRelationTest {
     }
 
     /** Testing method setPersonTwo */
-    @Test 
+    @Test
     public void testSetPersonTwo() {
         DisasterVictim newPersonTwo = new DisasterVictim("Jason Bourne", "2024-03-21");
         familyRelationObject.setPersonTwo(newPersonTwo);

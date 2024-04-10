@@ -1,4 +1,9 @@
-// MedicalRecord Class
+/**
+ * @author Alyan Qureshi <a href="mailto:muhammad.qureshi4@ucalgary.ca">
+ * muhammad.qureshi4@ucalgary.ca</a>
+ * @version 1.5
+ * @since 1.0
+*/
 
 package edu.ucalgary.oop;
 
@@ -54,12 +59,12 @@ public class MedicalRecord {
     }
 
     // Helper method to check if a string matches the YYYY-MM-DD date format
-    private boolean isValidDateFormat(String date) {
+    public boolean isValidDateFormat(String date) {
         try {
             LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
             return true;
         } catch (Exception e) {
-            return false;
+            throw new IllegalArgumentException("Invalid date format. Expected format: YYYY-MM-DD");
         }
     }
 }
