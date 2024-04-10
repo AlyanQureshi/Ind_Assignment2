@@ -471,7 +471,6 @@ public class Mains implements ReliefWorker {
         return phoneNumber;
     }
 
-
     public void victimMoreInfo(String fName, HashSet<Location> allLocations) {
         String lowerName = fName.toLowerCase();
         for (Location place : allLocations) {
@@ -555,7 +554,7 @@ public class Mains implements ReliefWorker {
             userInquirer = new Inquirer(fName, lName, number);
         }
 
-        int inquirerID = inquirerAlreadyExists(userInquirer);
+        int inquirerID = database.inquirerAlreadyExists(userInquirer);
         System.out.println("");
         if (inquirerID != 0) {
             System.out.println("This inquirer already exists.");
@@ -574,13 +573,13 @@ public class Mains implements ReliefWorker {
                 break;
             }
 
-            addToInquiryLog(inquirerID, date, inquiry);
+            database.addToInquiryLog(inquirerID, date, inquiry);
             System.out.println("This inquiry has been stored into the database.");
 
         } else {
-            addNewInquirer(userInquirer);
+            database.addNewInquirer(userInquirer);
             System.out.println("This inquirer is new and has now been added to the database!");
-            int newInquirerID = inquirerAlreadyExists(userInquirer);
+            int newInquirerID = database.inquirerAlreadyExists(userInquirer);
 
             System.out.print("Please enter the details this inquirer gave: ");
             String inquiry = scanner.nextLine();
@@ -597,7 +596,7 @@ public class Mains implements ReliefWorker {
                 break;
             }
 
-            addToInquiryLog(newInquirerID, date, inquiry);
+            database.addToInquiryLog(newInquirerID, date, inquiry);
             System.out.println("This inquiry has been stored into the database.");
         }
 
@@ -704,6 +703,7 @@ public class Mains implements ReliefWorker {
     }
 
     public int inquirerAlreadyExists(Inquirer person) {
+        
         int id = 0;
         try {
             Statement myStmt = dbConnect.createStatement();
